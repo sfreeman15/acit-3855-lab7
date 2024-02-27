@@ -1,5 +1,4 @@
 __pycache__/
 app.log
 readings.sqlite 
-stats.sqlite
 events.json
