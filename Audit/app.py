@@ -1,8 +1,6 @@
 import connexion
 from connexion import NoContent
-from sqlalchemy import and_
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+
 
 import datetime
 import requests
@@ -17,10 +15,7 @@ from pykafka.common import OffsetType
 from threading import Thread
 
 
-app = connexion.FlaskApp(__name__, specification_dir='')
-app.add_api("openapi.yaml",
-            strict_validation=True,
-            validate_responses=True)
+
 
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
@@ -109,7 +104,10 @@ def get_uploads(index):
         logger.error("Could not find ticket upload at index %d" % index)
     return { "message": "Not Found"}, 404
 
-
+app = connexion.FlaskApp(__name__, specification_dir='')
+app.add_api("openapi.yaml",
+            strict_validation=True,
+            validate_responses=True)
 
 if __name__ == "__main__":
     app.run(port=8110)
