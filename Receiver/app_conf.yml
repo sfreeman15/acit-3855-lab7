@@ -1,0 +1,9 @@
+version: 1
+eventstore1:
+  url: http://localhost:8090/sales/purchase
+eventstore2:
+  url: http://localhost:8090/sales/upload
+events:
+  hostname: acit-3855-lab6a.westus3.cloudapp.azure.com
+  port: 9092
+  topic: events

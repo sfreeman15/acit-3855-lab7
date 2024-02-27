@@ -1,0 +1,165 @@
+openapi: "3.0.0"
+info:
+  description: This API gets information about concert tickets for users to purchase and sell
+  version: "1.0.0"
+  title: Ticket Selling API
+  contact:
+    email: sfreeman15@my.bcit.ca
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /sales/purchase:
+    get: 
+      tags:
+        - tickets
+      summary: gets ticket purchase from history
+      operationId: app.get_purchases
+      description: Gets ticket purchases from the event store
+      parameters: 
+      - name: index
+        in: query
+        description: Gets the TP at the index of the event store
+        schema:
+          type: integer
+          example: 100
+      responses:
+        '200':
+          description: Successfully returned ticket purchase event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/TicketPurchases'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+        '404':
+          description: Not Found
+  /sales/upload:
+    get: 
+      tags:
+        - tickets
+      summary: gets ticket upload from history
+      operationId: app.get_uploads
+      description: Gets ticket upload from the event store
+      parameters:
+        - name: index
+          in: query
+          description: Gets the ticket upload at the index of the event store
+          schema:
+            type: integer
+            example: 100
+      responses:
+        '200':
+          description: Successfully returned a ticket upload event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/TicketUpload'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+
+          
+components:
+  schemas:
+    TicketPurchases:
+      type: object
+      required:
+        - ticket_id
+        - seat_number
+        - artist
+        - concert_name
+        - date
+        - venue
+        - price
+        - trace_id
+      properties:
+        ticket_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        seat_number:
+          type: string
+          example: Seat A45
+        artist:
+          type: string
+          example: Coldplay
+        concert_name:
+          type: string
+          example: Music of the Spheres Tour
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        venue: 
+          type: string
+          example: BC Place
+        price:
+          type: number
+          example: 260.99
+        trace_id:
+          type: string
+          format: uuid
+          example: 290f1ee-6c54-4b01-90e6-d701748f0854
+    TicketUpload:
+      type: object
+      required:
+        - seller_name
+        - ticket_id
+        - seat_number
+        - artist
+        - concert_name
+        - date
+        - venue
+        - price 
+        - trace_id
+      properties:
+        seller_name:
+          type: string
+          example: John Smith
+        ticket_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0853
+        seat_number:
+          type: string
+          example: Seat A45
+        artist:
+          type: string
+          example: Coldplay
+        concert_name:
+          type: string
+          example: Music of the Spheres Tour
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        venue: 
+          type: string
+          example: BC Place
+        price:
+          type: number
+          example: 260.99
+        trace_id:
+          type: string
+          format: uuid
+          example: 290f1ee-6c54-4b01-90e6-d701748f0854

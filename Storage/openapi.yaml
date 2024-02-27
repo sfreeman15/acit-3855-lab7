@@ -1,0 +1,210 @@
+openapi: 3.0.0
+info:
+  description: This API gets information about concert tickets for users to purchase and sell
+  version: "1.0.0"
+  title: Ticket Selling API
+  contact:
+    email: sfreeman15@my.bcit.ca
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /sales/purchase:
+    # post:
+    #   tags:
+    #     - tickets
+    #   summary: reports amount of tickets purchased
+    #   operationId: app.purchase
+    #   description: creates report of users with tickets and the assigned seats
+    #   responses:
+    #     '201':
+    #       description: item created
+    #     '400':
+    #       description: an existing item already exists
+    #   requestBody:
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/TicketPurchases'
+    #     description: Inventory item to add
+    get: 
+      tags:
+        - tickets
+      summary: gets new ticket purchase 
+      operationId: app.get_purchases
+      description: Gets ticket purchases added after a timestamp
+      parameters: 
+      - name: start_timestamp
+        in: query
+        description: Limits the number of purchases returned
+        schema:
+          type: string
+          # format: date-time
+          example: '2024-02-06T09:12:33.001Z'
+      - name: end_timestamp
+        in: query
+        description: Limits the number of purchases returned
+        schema:
+          type: string
+          # format: date-time
+          example: '2024-02-08T09:12:33.001Z'
+      responses:
+        '200':
+          description: Successfully returned a list of ticket purchases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketPurchases'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                
+  /sales/upload:
+    # post:
+    #   tags:
+    #     - tickets
+    #   summary: uploads tickets for sale
+    #   operationId: app.upload_ticket
+    #   description: Adds items to the system
+    #   responses:
+    #     '201':
+    #       description: item created
+    #     '400':
+    #       description: an existing item already exists
+    #   requestBody:
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/TicketUpload'
+    #     description: Inventory item to add
+    get: 
+      tags:
+        - tickets
+      summary: gets new ticket upload
+      operationId: app.get_uploads
+      description: Gets ticket upload added after a timestamp
+      parameters:
+        - name: start_timestamp
+          in: query
+          description: Limits the number of ticket uploads required
+          schema:
+            type: string
+            format: date-time
+            example: '2024-02-06T09:12:33.001Z'
+        - name: end_timestamp
+          in: query
+          description: Limits the number of readings returned
+          schema:
+            type: string
+            format: date-time
+            example: '2024-02-08T09:12:33.001Z'
+      responses:
+        '200':
+          description: Successfully returned a list of ticket upload events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TicketUpload'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+components:
+  schemas:
+    TicketPurchases:
+      type: object
+      required:
+        - ticket_id
+        - seat_number
+        - artist
+        - concert_name
+        - date
+        - venue
+        - price
+        - trace_id
+      properties:
+        ticket_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        seat_number:
+          type: string
+          example: Seat A45
+        artist:
+          type: string
+          example: Coldplay
+        concert_name:
+          type: string
+          example: Music of the Spheres Tour
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        venue: 
+          type: string
+          example: BC Place
+        price:
+          type: number
+          example: 260.99
+        trace_id:
+          type: string
+          format: uuid
+          example: 290f1ee-6c54-4b01-90e6-d701748f0854
+    TicketUpload:
+      type: object
+      required:
+        - seller_name
+        - ticket_id
+        - seat_number
+        - artist
+        - concert_name
+        - date
+        - venue
+        - price 
+        - trace_id
+      properties:
+        seller_name:
+          type: string
+          example: John Smith
+        ticket_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0853
+        seat_number:
+          type: string
+          example: Seat A45
+        artist:
+          type: string
+          example: Coldplay
+        concert_name:
+          type: string
+          example: Music of the Spheres Tour
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        venue: 
+          type: string
+          example: BC Place
+        price:
+          type: number
+          example: 260.99
+        trace_id:
+          type: string
+          format: uuid
+          example: 290f1ee-6c54-4b01-90e6-d701748f0854

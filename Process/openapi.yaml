@@ -1,0 +1,54 @@
+openapi: 3.0.0
+info:
+  description: This API gets information about concert tickets for users to purchase and sell
+  version: "1.0.0"
+  title: Ticket Selling API
+  contact:
+    email: sfreeman15@my.bcit.ca
+paths:
+  /stats:
+    get:
+      summary: Gets the event stats
+      operationId: app.get_stats
+      description: Gets ticket purchase and ticket upload processsed statistics
+      responses:
+        '200':
+          description: Successfully returned a list of ticket purchase and ticket events
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                $ref: '#/components/schemas/TicketStats'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    TicketStats:
+      required:
+      - num_tp_readings
+      - num_tu_readings 
+      - max_tp_readings
+      - max_tu_readings 
+      properties:
+        num_tp_readings:
+          type: integer
+          example: 500000
+        num_tu_readings:
+          type: integer
+          example: 4
+        max_tp_readings:
+          type: integer
+          example: 500000
+        max_tu_readings:
+          type: integer
+          example: 5
+      type: object

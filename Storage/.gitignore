@@ -1,0 +1,4 @@
+__pycache__/
+app.log
+events.json
+readings.sqlite

@@ -1,0 +1,219 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Room Rental API
+  contact:
+    email: jkang86@my.bcit.ca
+  description: This API receives rental request events from the customers
+paths:
+  /request/short-term:
+    post:
+      tags:
+        - App
+      summary: requests a daily rental
+      operationId: app.request_short_term
+      description: adds a new entry to the system
+      responses:
+        '201':
+          description: request has been added
+        '400':
+          description: Invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShortTermRequest'
+        description: Reading request to add
+    
+    get:
+      tags:
+        - App
+      summary: gets new short term reservation readings
+      operationId: app.get_request_short_term
+      description: Gets short term reservation readings added after a timestamp
+      parameters:
+        - name: start_timestamp
+          in: query
+          description: Limits the number of readings returned
+          schema:
+            type: string
+            #format: date-time
+            example: '2024-02-05T09:14:33.001Z'
+        - name: end_timestamp
+          in: query
+          description: Limits the number of readings returned
+          schema:
+            type: string
+            #format: date-time
+            example: '2024-03-06T10:14:33.001Z'
+      
+      responses:
+        '200':
+          description: Successfully returned a list of short term events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ShortTermRequest'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+        
+  /request/long-term:
+    post:
+      tags:
+        - App
+      summary: requests a monthly rental
+      operationId: app.request_long_term
+      description: adds a new entry to the system
+      responses:
+        '201':
+          description: request has been added
+        '400':
+          description: Invalid request
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LongTermRequest'
+        description: Reading request to add
+
+    get:
+      tags:
+        - App
+      summary: gets new long term reservation readings
+      operationId: app.get_request_long_term
+      description: Gets long term reservation readings added after a timestamp
+      parameters:
+        - name: start_timestamp
+          in: query
+          description: Limits the number of readings returned
+          schema:
+            type: string
+            #format: date-time
+            example: '2024-02-05T09:14:33.001Z'
+        - name: end_timestamp
+          in: query
+          description: Limits the number of readings returned
+          schema:
+            type: string
+            #format: date-time
+            example: '2024-02-06T10:14:33.001Z'
+      
+      responses:
+        '200':
+          description: Successfully returned a list of long term events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LongTermRequest'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        
+        
+components:
+  schemas:
+    ShortTermRequest:
+      required:
+      - owner_id
+      - customer_id
+      - room_id
+      - num_people
+      - rental_start
+      - rental_end
+      - timestamp
+      - trace_id
+      properties:
+        owner_id:
+          type: string
+          format: uuid
+          example: o290q2ww-6w12-5b34-91j4-k12345w6789
+        customer_id:
+          type: string
+          format: uuid
+          example: c290q2ww-6w12-5b34-91j4-k12345w6789
+        room_id:
+          type: integer
+          example: 2
+        num_people:
+          type: integer
+          format: int32
+          minimum: 1
+        rental_start:
+          type: string
+          format: date
+          example: '2024-01-08'
+        rental_end:
+          type: string
+          format: date
+          example: '2024-01-10'
+        timestamp:
+          type: string
+          format: date-time
+          example: '2024-01-08T09:12:33.001Z'
+        trace_id:
+          type: string
+          format: uuid
+          example: h854q2ww-6w12-5b34-91j4-k12345w6789
+      type: object
+      
+    LongTermRequest:
+      required:
+      - owner_id
+      - customer_id
+      - room_id
+      - num_people
+      - rental_start
+      - num_month
+      - timestamp
+      - trace_id
+      properties:
+        owner_id:
+          type: string
+          format: uuid
+          example: o290q2ww-6w12-5b34-91j4-k12345w6789
+        customer_id:
+          type: string
+          format: uuid
+          example: c290q2ww-6w12-5b34-91j4-k12345w6789
+        room_id:
+          type: integer
+          example: 2
+        num_people:
+          type: integer
+          format: int32
+          minimum: 1
+        rental_start:
+          type: string
+          format: date
+          example: '2024-01-09'
+        num_month:
+          type: integer
+          format: int32
+          example: 3
+        timestamp:
+          type: string
+          format: date-time
+          example: '2024-01-08T09:12:33.001Z'
+        trace_id:
+          type: string
+          format: uuid
+          example: j55q2ww-6w12-5b34-91j4-k12345w6789
+      type: object

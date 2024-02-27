@@ -1,0 +1,127 @@
+openapi: 3.0.0
+info:
+  description: This API gets information about concert tickets for users to purchase and sell
+  version: "1.0.0"
+  title: Ticket Selling API
+  contact:
+    email: sfreeman15@my.bcit.ca
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+paths:
+  /sales/purchase:
+    post:
+      summary: reports amount of tickets purchasedD
+      operationId: app.purchase
+      description: creates report of users with tickets and the assigned seats
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketPurchases'
+        description: Inventory item to add
+  /sales/upload:
+    post:
+      summary: uploads tickets for sale
+      operationId: app.upload_ticket
+      description: Adds items to the system
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TicketUpload'
+        description: Inventory item to add
+components:
+  schemas:
+    TicketPurchases:
+      type: object
+      required:
+        - ticket_id
+        - seat_number
+        - artist
+        - concert_name
+        - date
+        - venue
+        - price
+        - trace_id
+      properties:
+        ticket_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        seat_number:
+          type: string
+          example: Seat A45
+        artist:
+          type: string
+          example: Coldplay
+        concert_name:
+          type: string
+          example: Music of the Spheres Tour
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        venue: 
+          type: string
+          example: BC Place
+        price:
+          type: number
+          example: 260.99
+        trace_id:
+          type: string
+          format: uuid
+          example: 290f1ee-6c54-4b01-90e6-d701748f0854
+    TicketUpload:
+      type: object
+      required:
+        - ticket_id
+        - seller_name
+        - seat_number
+        - artist
+        - concert_name
+        - date
+        - venue
+        - price 
+        - trace_id
+      properties:
+        ticket_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0853
+        seller_name:
+          type: string
+          example: John Smith
+        seat_number:
+          type: string
+          example: Seat A45
+        artist:
+          type: string
+          example: Coldplay
+        concert_name:
+          type: string
+          example: Music of the Spheres Tour
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        venue: 
+          type: string
+          example: BC Place
+        price:
+          type: number
+          example: 260.99
+        trace_id:
+          type: string
+          format: uuid
+          example: 290f1ee-6c54-4b01-90e6-d701748f0854
