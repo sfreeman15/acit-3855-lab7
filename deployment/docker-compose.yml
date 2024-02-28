@@ -63,7 +63,7 @@ services:
   audit_log:
     image: 0d7c74f1b14a
     ports:
-      - "8110:8100"
+      - "8110:8110"
     depends_on:
       - "kafka"
       - "db"
