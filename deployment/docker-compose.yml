@@ -51,8 +51,8 @@ services:
     ports:
       - "8090:8090"
     depends_on:
-    - “kafka”
-    -"db"
+      - “kafka”
+      - "db"
   processing:
     image: 16d33c43b50d
     ports:
@@ -65,8 +65,8 @@ services:
     ports:
       - "8110:8100"
     depends_on:
-    - “kafka”
-    -"db"
+      - “kafka”
+      -"db"
       
 # Names our volume
 volumes:
