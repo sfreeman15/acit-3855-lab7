@@ -26,7 +26,6 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 
 
-DB_ENGINE = create_engine(f'mysql+pymysql://{app_config["datastore"]["user"]}:{app_config["datastore"]["password"]}@{app_config["datastore"]["hostname"]}:{app_config["datastore"]["port"]}/{app_config["datastore"]["db"]}')
 
 
 logger = logging.getLogger('basicLogger')
