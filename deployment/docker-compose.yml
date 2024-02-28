@@ -46,6 +46,8 @@ services:
       - "8080:8080"
     depends_on:
     - "kafka"
+    environment:
+      - "http://acit-3855-kafka.westus3.cloudapp.azure.com/"
   storage:
     image: a8621d1f9109
     ports:
