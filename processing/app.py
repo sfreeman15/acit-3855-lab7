@@ -74,6 +74,12 @@ def populate_stats():
   
     last_hour_datetime = datetime.datetime.now() - datetime.timedelta(hours = 19)
     end_timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    
+    num_tp_readings_updated = most_recent_statistic.num_tp_readings
+    num_tu_readings_updated = most_recent_statistic.num_tu_readings
+    max_tp_readings_updated = most_recent_statistic.max_tp_readings
+    max_tu_readings_updated = most_recent_statistic.max_tu_readings
+    
     database_time = most_recent_statistic.last_updated.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     purchase_requests = requests.get(f'{app_config["eventstore"]["url"]}/sales/purchase?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
     upload_request = requests.get(f'{app_config["eventstore"]["url"]}/sales/upload?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
@@ -82,6 +88,10 @@ def populate_stats():
     if purchase_requests.status_code != 200:
         logger.error(f"Error, purchase request returned status code {purchase_requests.status_code}")
 
+    logger.info(purchase_data)
+    logger.info(upload_data)
+
+    
     if most_recent_statistic:
         max_value_p = most_recent_statistic.max_tp_readings
         if most_recent_statistic.max_tp_readings < len(purchase_data):
