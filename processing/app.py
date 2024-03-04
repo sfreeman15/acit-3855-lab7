@@ -88,7 +88,7 @@ def populate_stats():
 
    # Check if the length of purchase_data exceeds the current maximum TP readings
     # and if the number of TP readings didn't increase
-    if len(purchase_data) > num_tp_readings_updated:
+    if len(purchase_data) > most_recent_statistic.max_tp_readings:
         # Update max_value_p with the new maximum TP readings
         max_value_p = len(purchase_data)
         # Update updated_purchase_val with the new maximum TP readings
@@ -96,7 +96,7 @@ def populate_stats():
 
     # Check if the length of upload_data exceeds the current maximum TU readings
     # and if the number of TU readings didn't increase
-    if len(upload_data) > num_tu_readings_updated:
+    if len(upload_data) > most_recent_statistic.max_tu_readings:
         # Update max_value_u with the new maximum TU readings
         max_value_u = len(upload_data)
         # Update updated_upload_val with the new maximum TU readings
