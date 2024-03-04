@@ -85,13 +85,23 @@ def populate_stats():
     upload_request = requests.get(f'{app_config["eventstore"]["url"]}/sales/upload?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
+
+    
     if purchase_requests.status_code != 200:
         logger.error(f"Error, purchase request returned status code {purchase_requests.status_code}")
 
-  
 
     
-    
+    # if most_recent_statistic:
+    #     max_value_p = most_recent_statistic.max_tp_readings
+    # if most_recent_statistic.max_tp_readings < len(purchase_data):
+    #     max_value_p = len(purchase_data)
+    #     max_value_u = most_recent_statistic.max_tu_readings
+    # if most_recent_statistic.max_tu_readings < len(upload_data):
+    #     max_value_u = len(  upload_data)
+    #     logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
+    #     stats = Stats(num_tp_readings = len(purchase_data), num_tu_readings= len(upload_data), max_tp_readings= max_value_p, max_tu_readings = max_value_u, last_updated= last_hour_datetime)
+    # # Now you can use 'last_updated' variablfe which holds the value of the 'last_updated' column
 
     if most_recent_statistic:
         max_value_p = most_recent_statistic.max_tp_readings
