@@ -82,19 +82,21 @@ def populate_stats():
     upload_request = requests.get(f'{app_config["eventstore"]["url"]}/sales/upload?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
+
+    
     max_value_p = most_recent_statistic.max_tp_readings
     max_value_u = most_recent_statistic.max_tu_readings
     
    # Check if the length of purchase_data exceeds the current maximum TP readings
     # and if the number of TP readings didn't increase
-    if len(purchase_data) > most_recent_statistic.max_tp_readings:
+    if len(purchase_data) > max_value_p
         # Update max_value_p with the new maximum TP readings
         max_value_p = len(purchase_data)
         # Update updated_purchase_val with the new maximum TP readings
 
     # Check if the length of upload_data exceeds the current maximum TU readings
     # and if the number of TU readings didn't increase
-    if len(upload_data) > most_recent_statistic.max_tu_readings:
+    if len(upload_data) > max_value_u
         # Update max_value_u with the new maximum TU readings
         max_value_u = len(upload_data)
         # Update updated_upload_val with the new maximum TU readings
