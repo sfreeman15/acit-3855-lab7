@@ -41,27 +41,27 @@ services:
     volumes:
       - my-db:/var/lib/mysql
   receiver:
-    image: 71eb4a62e68d
+    image: receiver/latest
     ports:
       - "8080:8080"
     depends_on:
     - "kafka"
   storage:
-    image: a8621d1f9109
+    image: storage/latest
     ports:
       - "8090:8090"
     depends_on:
       - "kafka"
       - "db"
   processing:
-    image: 16d33c43b50d
+    image: processing/latest
     ports:
       - "8100:8100"
     depends_on:
       - "storage"
     network_mode: "host"
   audit_log:
-    image: 0d7c74f1b14a
+    image: audit_log/latest
     ports:
       - "8110:8110"
     depends_on:
