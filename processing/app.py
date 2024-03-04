@@ -140,7 +140,9 @@ def populate_stats():
     session.commit()
     session.close()
     if purchase_data != None:
-        print(purchase_data)
+        print(f'purchase data: {purchase_data}')
+    else:
+        print("doesn't exist")
     print(purchase_requests.status_code)
     print(purchase_data)
     logger.info("Processing Period has ended.")
