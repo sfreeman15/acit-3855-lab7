@@ -139,7 +139,7 @@ def populate_stats():
     
     session.commit()
     session.close()
-    
+    print(purchase_requests.status_code)
     print(purchase_data)
     logger.info("Processing Period has ended.")
     
