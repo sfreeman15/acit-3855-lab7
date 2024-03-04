@@ -87,19 +87,27 @@ def populate_stats():
     max_value_p = most_recent_statistic.max_tp_readings
     max_value_u = most_recent_statistic.max_tu_readings
     
-   # Check if the length of purchase_data exceeds the current maximum TP readings
-    # and if the number of TP readings didn't increase
-    if len(purchase_data) > max_value_p
-        # Update max_value_p with the new maximum TP readings
-        max_value_p = len(purchase_data)
-        # Update updated_purchase_val with the new maximum TP readings
+   # # Check if the length of purchase_data exceeds the current maximum TP readings
+   #  # and if the number of TP readings didn't increase
+   #  if len(purchase_data) > max_value_p:
+   #      # Update max_value_p with the new maximum TP readings
+   #      max_value_p = len(purchase_data)
+   #      # Update updated_purchase_val with the new maximum TP readings
 
-    # Check if the length of upload_data exceeds the current maximum TU readings
-    # and if the number of TU readings didn't increase
-    if len(upload_data) > max_value_u
-        # Update max_value_u with the new maximum TU readings
-        max_value_u = len(upload_data)
-        # Update updated_upload_val with the new maximum TU readings
+   #  # Check if the length of upload_data exceeds the current maximum TU readings
+   #  # and if the number of TU readings didn't increase
+   #  if len(upload_data) > max_value_u:
+   #      # Update max_value_u with the new maximum TU readings
+   #      max_value_u = len(upload_data)
+   #      # Update updated_upload_val with the new maximum TU readings
+
+    for i in purchase_data:
+         if most_recent_statistic.max_tp_readings < i["price"]:
+              max_value_p = i["price"]
+    for j in upload_data:
+         if most_recent_statistic.max_tu_readings < j["price"]:
+              max_value_u = j["price"]
+
 
     if most_recent_statistic:
         for index in range(len(purchase_data)):
