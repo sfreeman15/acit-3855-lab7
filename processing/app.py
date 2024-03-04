@@ -72,8 +72,8 @@ def populate_stats():
         
 
   
-    last_hour_datetime = datetime.datetime.now() - datetime.timedelta(hours = 19)
-    end_timestamp = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    last_hour_datetime = datetime.datetime.now()
+    end_timestamp = last_hour_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     
     num_tp_readings_updated = most_recent_statistic.num_tp_readings
     num_tu_readings_updated = most_recent_statistic.num_tu_readings
@@ -99,7 +99,7 @@ def populate_stats():
         if most_recent_statistic.max_tu_readings < len(upload_data):
             max_value_u = len(upload_data)
         logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
-        stats = Stats(num_tp_readings = len(purchase_data), num_tu_readings= len(upload_data), max_tp_readings= max_value_p, max_tu_readings = max_value_u, last_updated= last_hour_datetime)
+        stats = Stats(num_tp_readings = most_recent_statistic_num_tp_readings += len(purchase_data), num_tu_readings= most_recent_statistic_num_tu_readings += len(upload_data), max_tp_readings= max_value_p, max_tu_readings = max_value_u, last_updated= end_timestamp)
     # Now you can use 'last_updated' variablfe which holds the value of the 'last_updated' column
 
 
