@@ -102,10 +102,10 @@ def populate_stats():
    #      # Update updated_upload_val with the new maximum TU readings
 
     for i in purchase_data:
-         if most_recent_statistic.max_tp_readings < i["price"]:
+         if max_value_p < i["price"]:
               max_value_p = i["price"]
     for j in upload_data:
-         if most_recent_statistic.max_tu_readings < j["price"]:
+         if max_value_u < j["price"]:
               max_value_u = j["price"]
 
 
