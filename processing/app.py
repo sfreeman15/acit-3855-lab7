@@ -93,20 +93,38 @@ def populate_stats():
      updated_purchase_val = most_recent_statistic.max_tp_readings 
     updated_upload_val = most_recent_statistic.max_tu_readings 
 
+    # Retrieve the current maximum TP and TU readings
+    updated_purchase_val = most_recent_statistic.max_tp_readings 
+    updated_upload_val = most_recent_statistic.max_tu_readings 
+    
+    # Check if most_recent_statistic exists
     if most_recent_statistic:
+        # Initialize max_value_p and max_value_u with the current maximum TP and TU readings
         max_value_p = most_recent_statistic.max_tp_readings
         max_value_u = most_recent_statistic.max_tu_readings
-
-    if len(purchase_data) > max_value_p and most_recent_statistic.num_tp_readings < len(purchase_data):
+    
+    # Check if the length of purchase_data exceeds the current maximum TP readings
+    # and if the number of TP readings didn't increase
+    if len(purchase_data) > max_value_p and most_recent_statistic.num_tp_readings == len(purchase_data):
+        # Update max_value_p with the new maximum TP readings
         max_value_p = len(purchase_data)
+        # Update updated_purchase_val with the new maximum TP readings
         updated_purchase_val = max_value_p
-
-    if len(upload_data) > max_value_u and most_recent_statistic.num_tu_readings < len(upload_data):
+    
+    # Check if the length of upload_data exceeds the current maximum TU readings
+    # and if the number of TU readings didn't increase
+    if len(upload_data) > max_value_u and most_recent_statistic.num_tu_readings == len(upload_data):
+        # Update max_value_u with the new maximum TU readings
         max_value_u = len(upload_data)
+        # Update updated_upload_val with the new maximum TU readings
         updated_upload_val = max_value_u
-
+    
+    # Log the number of purchase and upload events received
     logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
+    
+    # Create a new Stats object with updated values
     stats = Stats(num_tp_readings=len(purchase_data), num_tu_readings=len(upload_data), max_tp_readings=max_value_p, max_tu_readings=max_value_u, last_updated=last_hour_datetime)
+
 
 
     
