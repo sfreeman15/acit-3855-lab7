@@ -108,10 +108,9 @@ def populate_stats():
 
 
     
-    
 
 
-
+    if most_recent_statistic:
         for index in range(len(purchase_data)):
                 logger.debug(f'Purchase trace_id: {purchase_data[index]["trace_id"]}')
         for index in range(len(upload_data)):
