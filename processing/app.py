@@ -86,13 +86,6 @@ def populate_stats():
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
 
-    
-    if purchase_requests.status_code != 200:
-        logger.error(f"Error, purchase request returned status code {purchase_requests.status_code}")
-
-     updated_purchase_val = most_recent_statistic.max_tp_readings 
-    updated_upload_val = most_recent_statistic.max_tu_readings 
-
     # Retrieve the current maximum TP and TU readings
     updated_purchase_val = most_recent_statistic.max_tp_readings 
     updated_upload_val = most_recent_statistic.max_tu_readings 
@@ -105,7 +98,7 @@ def populate_stats():
     
     # Check if the length of purchase_data exceeds the current maximum TP readings
     # and if the number of TP readings didn't increase
-    if len(purchase_data) > max_value_p and most_recent_statistic.num_tp_readings == len(purchase_data):
+    if len(purchase_data) > max_value_p:
         # Update max_value_p with the new maximum TP readings
         max_value_p = len(purchase_data)
         # Update updated_purchase_val with the new maximum TP readings
@@ -113,7 +106,7 @@ def populate_stats():
     
     # Check if the length of upload_data exceeds the current maximum TU readings
     # and if the number of TU readings didn't increase
-    if len(upload_data) > max_value_u and most_recent_statistic.num_tu_readings == len(upload_data):
+    if len(upload_data) > max_value_u:
         # Update max_value_u with the new maximum TU readings
         max_value_u = len(upload_data)
         # Update updated_upload_val with the new maximum TU readings
@@ -124,6 +117,8 @@ def populate_stats():
     
     # Create a new Stats object with updated values
     stats = Stats(num_tp_readings=len(purchase_data), num_tu_readings=len(upload_data), max_tp_readings=max_value_p, max_tu_readings=max_value_u, last_updated=last_hour_datetime)
+
+        
 
 
 
