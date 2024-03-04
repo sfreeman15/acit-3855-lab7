@@ -88,7 +88,7 @@ def populate_stats():
 
    # Check if the length of purchase_data exceeds the current maximum TP readings
     # and if the number of TP readings didn't increase
-    if len(purchase_data) > most_recent_statistic.max_tp_readings:
+    if len(purchase_data) > num_tp_readings_updated:
         # Update max_value_p with the new maximum TP readings
         max_value_p = len(purchase_data)
         # Update updated_purchase_val with the new maximum TP readings
@@ -96,19 +96,11 @@ def populate_stats():
 
     # Check if the length of upload_data exceeds the current maximum TU readings
     # and if the number of TU readings didn't increase
-    if len(upload_data) > most_recent_statistic.max_tu_readings:
+    if len(upload_data) > num_tu_readings_updated:
         # Update max_value_u with the new maximum TU readings
         max_value_u = len(upload_data)
         # Update updated_upload_val with the new maximum TU readings
         updated_upload_val = max_value_u
-
-
-        
-
-
-
-    
-
 
     if most_recent_statistic:
         for index in range(len(purchase_data)):
@@ -118,23 +110,6 @@ def populate_stats():
             
         logger.debug(f'Updated Statistics Values - num_tp_readings: {stats.num_tp_readings}, num_tu_readings: {stats.num_tu_readings}, max_tp_readings: {stats.max_tp_readings}, max_tu_readings: {stats.max_tu_readings}, last_updated: {stats.last_updated}')
 
-        
-
-   
-
-    # Handle the case where there are no statistics in the table
-    # print("5")
-       
-    #the format of the datetime might be wrong here?
-    # print("6")
-    
-
-    #consistent with processing and storage
-    #storage wlil convert datetime
-    #make sure to convert datetime from db to str
-
-    # print('7')
-    # print(purchase_data.status_code)
 
     logger.info("yes")
     # logger.info(f"{purchase_data.status_code}")
