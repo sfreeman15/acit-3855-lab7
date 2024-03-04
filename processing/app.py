@@ -103,17 +103,7 @@ def populate_stats():
     #     stats = Stats(num_tp_readings = len(purchase_data), num_tu_readings= len(upload_data), max_tp_readings= max_value_p, max_tu_readings = max_value_u, last_updated= last_hour_datetime)
     # # Now you can use 'last_updated' variablfe which holds the value of the 'last_updated' column
 
-    if most_recent_statistic:
-        max_value_p = most_recent_statistic.max_tp_readings
-    if len(purchase_data) > most_recent_statistic.max_tp_readings:
-        max_value_p = len(purchase_data)
     
-    max_value_u = most_recent_statistic.max_tu_readings
-    if len(upload_data) > most_recent_statistic.max_tu_readings:
-        max_value_u = len(upload_data)
-    
-    logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
-    stats = Stats(num_tp_readings=most_recent_statistic.num_tp_readings + len(purchase_data), num_tu_readings=most_recent_statistic.num_tu_readings + len(upload_data), max_tp_readings=max_value_p, max_tu_readings=max_value_u, last_updated=end_timestamp)
 
 
 
@@ -146,7 +136,17 @@ def populate_stats():
     # logger.info(f"{purchase_data.status_code}")
     
 
-                 
+    if most_recent_statistic:
+        max_value_p = most_recent_statistic.max_tp_readings
+    if len(purchase_data) > most_recent_statistic.max_tp_readings:
+        max_value_p = len(purchase_data)
+    
+    max_value_u = most_recent_statistic.max_tu_readings
+    if len(upload_data) > most_recent_statistic.max_tu_readings:
+        max_value_u = len(upload_data)
+    
+    logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
+    stats = Stats(num_tp_readings=most_recent_statistic.num_tp_readings + len(purchase_data), num_tu_readings=most_recent_statistic.num_tu_readings + len(upload_data), max_tp_readings=max_value_p, max_tu_readings=max_value_u, last_updated=end_timestamp)          
 
     if stats:
          session.add(stats)
