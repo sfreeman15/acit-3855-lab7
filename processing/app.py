@@ -88,8 +88,7 @@ def populate_stats():
     if purchase_requests.status_code != 200:
         logger.error(f"Error, purchase request returned status code {purchase_requests.status_code}")
 
-    logger.info(purchase_data)
-    logger.info(upload_data)
+  
 
     
     if most_recent_statistic:
@@ -142,7 +141,8 @@ def populate_stats():
     session.close()
 
     logger.info("Processing Period has ended.")
-    
+    logger.info(purchase_data)
+    logger.info(upload_data)
 
 
 
