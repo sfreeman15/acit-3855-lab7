@@ -75,10 +75,7 @@ def populate_stats():
     last_hour_datetime = datetime.datetime.now()
     end_timestamp = last_hour_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     
-    num_tp_readings_updated = most_recent_statistic.num_tp_readings
-    num_tu_readings_updated = most_recent_statistic.num_tu_readings
-    max_tp_readings_updated = most_recent_statistic.max_tp_readings
-    max_tu_readings_updated = most_recent_statistic.max_tu_readings
+   
     
     database_time = most_recent_statistic.last_updated.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     purchase_requests = requests.get(f'{app_config["eventstore"]["url"]}/sales/purchase?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
@@ -92,7 +89,6 @@ def populate_stats():
         # Update max_value_p with the new maximum TP readings
         max_value_p = len(purchase_data)
         # Update updated_purchase_val with the new maximum TP readings
-        updated_purchase_val = max_value_p
 
     # Check if the length of upload_data exceeds the current maximum TU readings
     # and if the number of TU readings didn't increase
@@ -100,7 +96,6 @@ def populate_stats():
         # Update max_value_u with the new maximum TU readings
         max_value_u = len(upload_data)
         # Update updated_upload_val with the new maximum TU readings
-        updated_upload_val = max_value_u
 
     if most_recent_statistic:
         for index in range(len(purchase_data)):
