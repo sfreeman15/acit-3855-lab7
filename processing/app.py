@@ -136,11 +136,14 @@ def populate_stats():
 
     if stats:
          session.add(stats)
-    logger.info(purchase_data)
-    logger.info(upload_data)
+    
     session.commit()
     session.close()
-
+    logger.info(f'purchase data: {purchase_data}')
+    logger.info(f'upload data: {upload_data}')
+    print(f'purchase data: {purchase_data}')
+    print(f'upload data: {upload_data}')
+    
     logger.info("Processing Period has ended.")
     
 
