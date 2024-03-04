@@ -46,9 +46,9 @@ components:
           type: integer
           example: 4
         max_tp_readings:
-          type: integer
+          type: number
           example: 500000
         max_tu_readings:
-          type: integer
+          type: number
           example: 5
       type: object
