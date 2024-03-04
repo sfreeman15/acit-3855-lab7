@@ -115,7 +115,7 @@ def populate_stats():
         for index in range(len(upload_data)):
                 logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
             
-        logger.debug(f'Updated Statistics Values - num_tp_readings: {stats.num_tp_readings}, num_tu_readings: {stats.num_tu_readings}, max_tp_readings: {stats.max_tp_readings}, max_tu_readings: {stats.max_tu_readings}, last_updated: {stats.last_updated}')
+        logger.debug(f'Updated Statistics Values - num_tp_readings: {most_recent_statistic.num_tp_readings}, num_tu_readings: {most_recent_statistic.num_tu_readings}, max_tp_readings: {most_recent_statistic.max_tp_readings}, max_tu_readings: {most_recent_statistic.max_tu_readings}, last_updated: {most_recent_statistic.last_updated}')
 
 
     logger.info("yes")
