@@ -74,7 +74,8 @@ def populate_stats():
   
     last_hour_datetime = datetime.datetime.now()
     end_timestamp = last_hour_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-    
+    end_timestamp = datetime.datetime.fromisoformat(end_timestamp)
+
    
     
     database_time = most_recent_statistic.last_updated.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
