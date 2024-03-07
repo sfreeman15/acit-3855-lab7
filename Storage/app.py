@@ -20,15 +20,6 @@ from threading import Thread
 
 
 
-app.add_middleware(
-    CORSMiddleware,
-    position=MiddlewarePosition.BEFORE_EXCEPTION,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 
 
 with open('app_conf.yml', 'r') as f:
