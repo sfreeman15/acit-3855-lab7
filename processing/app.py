@@ -18,7 +18,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import json
 
 
-app = FlaskApp(__name__)
 
 
 
