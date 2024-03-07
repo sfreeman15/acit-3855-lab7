@@ -1,5 +1,7 @@
 import connexion
 from connexion import NoContent
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy import and_
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -14,6 +16,9 @@ import logging.config
 import uuid
 from apscheduler.schedulers.background import BackgroundScheduler
 import json
+
+
+app = FlaskApp(__name__)
 
 
 
@@ -128,7 +133,8 @@ def populate_stats():
     
     
     
-
+    logger.info(f'Last Updated: {stats.last_updated}')
+    
 
 
     
@@ -181,10 +187,20 @@ app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
             strict_validation=True,
             validate_responses=True)
-     
 
+
+app.add_middleware(
+    CORSMiddleware,
+    position=MiddlewarePosition.BEFORE_EXCEPTION,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+    
 if __name__ == "__main__":  
 # run our standalone gevent server
     init_scheduler()
-    app.run(port=8100)
+    app.run(port=8100, host="0.0.0.0")
 
