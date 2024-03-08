@@ -1,7 +1,5 @@
 import connexion
 from connexion import NoContent
-
-
 import datetime
 import requests
 import yaml

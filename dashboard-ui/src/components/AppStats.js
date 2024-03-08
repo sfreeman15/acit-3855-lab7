@@ -20,7 +20,7 @@ export default function AppStats() {
             })
     }
     useEffect(() => {
-		const interval = setInterval(() => getStats(), 2000); // Update every 2 seconds
+		const interval = setInterval(() => getStats(), 4000); // Update every 2 seconds
 		return() => clearInterval(interval);
     }, [getStats]);
 
@@ -35,8 +35,8 @@ export default function AppStats() {
                 <table className={"StatsTable"}>
 					<tbody>
 						<tr>
-							<th>Blood Pressure</th>
-							<th>Heart Rate</th>
+							<th>Ticket Purchase</th>
+							<th>Ticket Upload</th>
 						</tr>
 						<tr>
 							<td># Ticket Purchase: {stats['num_tp_readings']}</td>
@@ -46,7 +46,7 @@ export default function AppStats() {
 							<td colspan="2">Max Amount of Ticket Purchase Requests: {stats['max_tp_readings']}</td>
 						</tr>
 						<tr>
-							<td colspan="2">Max Amount of Ticket Upload requests: {stats['max_tu_readings']}</td>
+							<td colspan="2">Max Amount of Ticket Upload {stats['max_tu_readings']}</td>
 						</tr>
 					</tbody>
                 </table>
