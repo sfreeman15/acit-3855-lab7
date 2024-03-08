@@ -73,7 +73,7 @@ services:
       - "3000:3000"
     depends_on:
       - "processing"
-      d- "audit_log"
+      - "audit_log"
       
 # Names our volume
 volumes:
