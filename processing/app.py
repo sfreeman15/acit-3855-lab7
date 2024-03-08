@@ -170,7 +170,8 @@ def get_stats():
     pydict = {"num_tp_readings": most_recent_statistic.num_tp_readings,
               "num_tu_readings":most_recent_statistic.num_tu_readings,
               "max_tp_readings": most_recent_statistic.max_tp_readings,
-              "max_tu_readings": most_recent_statistic.max_tu_readings,}
+              "max_tu_readings": most_recent_statistic.max_tu_readings,
+              "last_updated": most_recent_statistic.last_updated}
     session.close()
     logger.info("Request has completed")
     return pydict, 200
