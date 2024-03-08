@@ -172,7 +172,7 @@ def get_stats():
               "num_tu_readings":most_recent_statistic.num_tu_readings,
               "max_tp_readings": most_recent_statistic.max_tp_readings,
               "max_tu_readings": most_recent_statistic.max_tu_readings,
-              "last_updated": last_updated_pst.strftime('%Y-%m-%d ^H:%M:%S %Z%z')}
+              "last_updated": last_updated_pst.strftime('%Y-%m-%d %H:%M:%S %Z%z')}
     session.close()
     logger.info("Request has completed")
     return pydict, 200
