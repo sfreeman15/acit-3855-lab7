@@ -14,8 +14,7 @@ from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread
 from flask_cors import CORS, cross_origin
-from connexion.middleware import MiddlewarePosition
-from starlette.middleware.cors import CORSMiddleware
+
 
 
 with open('app_conf.yml', 'r') as f:
