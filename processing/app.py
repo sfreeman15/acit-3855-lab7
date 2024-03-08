@@ -16,7 +16,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import json
 from flask_cors import CORS, cross_origin
 from pytz import timezone
-from datetime import timedelta
 
 
 
@@ -161,9 +160,10 @@ def init_scheduler():
 def get_stats():
     logger.info("Request has started")
     session = DB_SESSION()
-    
+    pst = timezone('America/Vancouver')
+
     most_recent_statistic = session.query(Stats).order_by(Stats.id.desc()).first()
-    
+    last_updated_pst = most_recent_statistic.last_updated.astimezone(pst)
     if most_recent_statistic is None:
          logger.error("ERROR, NOTHING IN DATA IN TABLES")
          return "Statistics do not exist", 404
@@ -172,7 +172,7 @@ def get_stats():
               "num_tu_readings":most_recent_statistic.num_tu_readings,
               "max_tp_readings": most_recent_statistic.max_tp_readings,
               "max_tu_readings": most_recent_statistic.max_tu_readings,
-              "last_updated": most_recent_statistic - timedelta(seconds=28800)}
+              "last_updated": last_updated_pst.strftime('%Y-%m-%d ^H:%M:%S %Z%z')}
     session.close()
     logger.info("Request has completed")
     return pydict, 200
