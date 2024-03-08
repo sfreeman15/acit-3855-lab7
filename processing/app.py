@@ -16,6 +16,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import json
 from flask_cors import CORS, cross_origin
 from pytz import timezone
+from datetime import timedelta
 
 
 
@@ -171,7 +172,7 @@ def get_stats():
               "num_tu_readings":most_recent_statistic.num_tu_readings,
               "max_tp_readings": most_recent_statistic.max_tp_readings,
               "max_tu_readings": most_recent_statistic.max_tu_readings,
-              "last_updated": most_recent_statistic.last_updated}
+              "last_updated": most_recent_statistic - timedelta(seconds=28800)}
     session.close()
     logger.info("Request has completed")
     return pydict, 200
