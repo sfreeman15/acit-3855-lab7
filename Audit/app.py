@@ -13,8 +13,9 @@ import json
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread
-
-
+from flask_cors import CORS, cross_origin
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
 
 
 with open('app_conf.yml', 'r') as f:
@@ -107,7 +108,7 @@ app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
             strict_validation=True,
             validate_responses=True)
+app.app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":
-    app.run(port=8110)
-
+    app.run(port=8110, host="0.0.0.0")
