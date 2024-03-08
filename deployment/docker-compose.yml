@@ -67,6 +67,13 @@ services:
     depends_on:
       - "kafka"
       - "db"
+  dashboard:
+    image: dashboard
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "processing"
+      d- "audit_log"
       
 # Names our volume
 volumes:
