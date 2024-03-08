@@ -20,7 +20,7 @@ export default function EndpointAudit(props) {
             })
     }
 	useEffect(() => {
-		const interval = setInterval(() => getAudit(), 4000); // Update every 4 seconds
+		const interval = setInterval(() => getAudit(), 2000); // Update every 4 seconds
 		return() => clearInterval(interval);
     }, [getAudit]);
 
