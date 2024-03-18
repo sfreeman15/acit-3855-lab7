@@ -37,7 +37,7 @@ DB_ENGINE = create_engine(
     f'@{app_config["datastore"]["hostname"]}:{app_config["datastore"]["port"]}'
     f'/{app_config["datastore"]["db"]}',
     pool_size=5,  # Adjust the pool size as needed
-    pool_recycle=1400,
+    pool_recycle=600,
     pool_pre_ping=True
 )
 logger.info(f'Connecting to DB.Hostname:"{app_config["datastore"]["hostname"]}. Port: {app_config["datastore"]["port"]}')
