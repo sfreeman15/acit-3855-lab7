@@ -28,6 +28,7 @@ with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
+hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
 
 logger = logging.getLogger('basicLogger')
 sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
