@@ -131,6 +131,8 @@ def process_messages():
     logger.debug("Start of process_messages function")
     hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
     sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
+    max_retries = app_config["retries"]['retry_count']
+
     
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't
@@ -147,8 +149,11 @@ def process_messages():
             time.sleep(sleepy_time)
             logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
             currnet_retry_count += 1
-
-    consumer = topic.get_simple_consumer(consumer_group=b'event_group',reset_offset_on_start=False,auto_offset_reset=OffsetType.LATEST)
+    if current_retry_count == max_retries:
+            logger.error("Failed to connect to Kafka after %d retries. Exiting.", max_retries)
+            return
+        
+    consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
