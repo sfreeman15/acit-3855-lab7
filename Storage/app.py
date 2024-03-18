@@ -141,14 +141,14 @@ def process_messages():
     current_retry_count = 0 
     
     while current_retry_count < app_config["retries"]['retry_count']:
-        try:
+        try:    
+            logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["events"]["topic"])]
             break #yahoo 
         except:
             logger.error("Connection failed")
             time.sleep(sleepy_time)
-            logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
             current_retry_count += 1
            
         

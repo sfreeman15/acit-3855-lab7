@@ -37,6 +37,7 @@ max_retries = app_config["retries"]['retry_count']
 current_retry_count = 0 
 while current_retry_count < app_config["retries"]['retry_count']:
     try:
+        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
         client = KafkaClient(hosts=hostname)
         topic = client.topics[str.encode(app_config["events"]["topic"])]
         producer = topic.get_sync_producer()
