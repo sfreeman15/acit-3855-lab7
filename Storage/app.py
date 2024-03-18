@@ -135,7 +135,6 @@ def process_messages():
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't
     # read all the old messages from the history in the message queue).
-    consumer = topic.get_simple_consumer(consumer_group=b'event_group',reset_offset_on_start=False,auto_offset_reset=OffsetType.LATEST)
     # This is blocking - it will wait for a new message
     current_retry_count = 0 
     
@@ -149,7 +148,8 @@ def process_messages():
             logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
             currnet_retry_count += 1
 
-        
+    consumer = topic.get_simple_consumer(consumer_group=b'event_group',reset_offset_on_start=False,auto_offset_reset=OffsetType.LATEST)
+
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
         msg = json.loads(msg_str)
