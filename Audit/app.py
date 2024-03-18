@@ -50,11 +50,12 @@ def get_purchases(index):
         for msg in consumer:
             msg_str = msg.value.decode('utf-8')
             msg = json.loads(msg_str)
+            current_index += 1
+
 
             if current_index == index:
                 return msg, 200
             
-            current_index += 1
 
             if current_index > index:
                 break
@@ -85,11 +86,11 @@ def get_uploads(index):
         for msg in consumer:
             msg_str = msg.value.decode('utf-8')
             msg = json.loads(msg_str)
+            current_index += 1
 
             if current_index == index:
                 return msg, 200
             
-            current_index += 1
 
             if current_index > index:
                 break
