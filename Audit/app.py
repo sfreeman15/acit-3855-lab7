@@ -44,7 +44,7 @@ def get_purchases(index):
     # index is large and messages are constantly being received!
     consumer = topic.get_simple_consumer(reset_offset_on_start=True,
     consumer_timeout_ms=1000)
-    logger.info("Retrieving BP at index %d" % index)
+    logger.info("Retrieving ticket purchaes  at index %d" % index)
     current_index = 0
     try:
         count=0
@@ -68,6 +68,9 @@ def get_purchases(index):
             # i.e., return event, 200
     except:
         logger.error("No more messages found")
+
+    logger.error("Could not find upload reading at index %d" % index)
+    return {"message": "Not Found"}, 404
 
 def get_uploads(index):
     """ Get ticket upload in History """
@@ -107,7 +110,7 @@ def get_uploads(index):
     except:
         logger.error("No more messages found")
 
-    logger.error("Could not find Ammunition reading at index %d" % index)
+    logger.error("Could not find upload reading at index %d" % index)
     return {"message": "Not Found"}, 404
 
 app = connexion.FlaskApp(__name__, specification_dir='')
