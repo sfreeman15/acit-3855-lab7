@@ -138,6 +138,8 @@ def process_messages():
     consumer = topic.get_simple_consumer(consumer_group=b'event_group',reset_offset_on_start=False,auto_offset_reset=OffsetType.LATEST)
     # This is blocking - it will wait for a new message
     current_retry_count = 0 
+    max_retries = app_config["retries"]
+    current_retry_count = 0 
 
     while current_retry_count < max_retries:
         try:
@@ -154,6 +156,7 @@ def process_messages():
     if current_retry_count == max_retries:
         logger.error("Failed to connect to Kafka after %d retries. Exiting.", max_retries)
         return
+
         
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
