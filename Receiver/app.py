@@ -12,11 +12,17 @@ import logging.config
 from pykafka import KafkaClient
 import time
 
-
 MAX_EVENTS= 5
 EVENT_FILE = "events.json"
 
 
+
+    
+# Create a consume on a consumer group, that only reads new messages
+# (uncommitted messages) when the service re-starts (i.e., it doesn't
+# read all the old messages from the history in the message queue).
+# This is blocking - it will wait for a new message
+current_retry_count = 0 
 
 
     
@@ -28,27 +34,27 @@ with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
-hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
 
 logger = logging.getLogger('basicLogger')
+
 sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
 max_retries = app_config["retries"]['retry_count']
 
-current_retry_count = 0 
 while current_retry_count < app_config["retries"]['retry_count']:
     logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-
-    try:
-        client = KafkaClient(hosts=hostname)
+    try:    
+        client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
         topic = client.topics[str.encode(app_config["events"]["topic"])]
         producer = topic.get_sync_producer()
+
         logger.info("Connected!")
         break #yahoo 
     except:
         logger.error("Connection failed")
         time.sleep(sleepy_time)
         current_retry_count += 1
-    
+           
+        
 
 
 def purchase(body):
@@ -60,9 +66,9 @@ def purchase(body):
     headers =  { "content-type": "application/json" }
     # response = requests.post(app_config["eventstore1"]["url"], json=body, headers=headers)
 
-    # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
-    # topic = client.topics[str.encode(app_config["events"]["topic"])]
-    # producer = topic.get_sync_producer()
+    client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
+    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    producer = topic.get_sync_producer()
     msg = { "type": "purchase",
             "datetime" : datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "payload": body }
@@ -83,7 +89,9 @@ def upload_ticket(body):
     headers =  { "content-type": "application/json" }
     # response = requests.post(app_config["eventstore1"]["url"], json=body, headers=headers)
 
-   
+    client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
+    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    producer = topic.get_sync_producer()
     msg = { "type": "upload",
             "datetime" : datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "payload": body }
