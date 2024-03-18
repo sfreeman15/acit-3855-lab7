@@ -41,7 +41,6 @@ while current_retry_count < app_config["retries"]['retry_count']:
         client = KafkaClient(hosts=hostname)
         topic = client.topics[str.encode(app_config["events"]["topic"])]
         producer = topic.get_sync_producer()
-
         break #yahoo 
     except:
         logger.error("Connection failed")
