@@ -48,16 +48,16 @@ def get_purchases(index):
     current_index = 0
     try:
         for msg in consumer:
-            msg_str = msg.value.decode('utf-8')
-            msg = json.loads(msg_str)
-
+            # Other code...
             if current_index == index:
+                current_index += 1  # Move the increment here
                 return msg, 200
-            
+                
             current_index += 1
 
             if current_index > index:
                 break
+
     # Find the event at the index you want and
     # return code 200
     # i.e., return event, 200
@@ -83,16 +83,16 @@ def get_uploads(index):
     current_index = 0
     try:
         for msg in consumer:
-            msg_str = msg.value.decode('utf-8')
-            msg = json.loads(msg_str)
-
+            # Other code...
             if current_index == index:
+                current_index += 1  # Move the increment here
                 return msg, 200
-            
+                
             current_index += 1
 
             if current_index > index:
                 break
+
     # Find the event at the index you want and
     # return code 200
     # i.e., return event, 200
