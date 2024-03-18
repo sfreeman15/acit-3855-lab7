@@ -45,7 +45,6 @@ while current_retry_count < app_config["retries"]['retry_count']:
     except:
         logger.error("Connection failed")
         time.sleep(sleepy_time)
-        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
         current_retry_count += 1
     
 
