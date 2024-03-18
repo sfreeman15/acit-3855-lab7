@@ -47,25 +47,27 @@ def get_purchases(index):
     logger.info("Retrieving BP at index %d" % index)
     current_index = 0
     try:
+        count=0
         for msg in consumer:
+            # msg = json.loads(msg.value.decode('utf-8'))
             msg_str = msg.value.decode('utf-8')
             msg = json.loads(msg_str)
-            current_index += 1
-
-
-            if current_index == index:
-                return msg, 200
+            # print(type(msg))
+            # print(msg['type'])
             
-
-            if current_index > index:
-                break
-    # Find the event at the index you want and
-    # return code 200
-    # i.e., return event, 200
+            if msg['type']=='purchase':
+                # print("here")
+                # msg_str = msg.value.decode('utf-8')
+                if count==index:
+                    return msg['payload'], 200
+        
+                count+=1
+            # print(type(msg))
+            # Find the event at the index you want and
+            # return code 200
+            # i.e., return event, 200
     except:
         logger.error("No more messages found")
-        logger.error("Could not find BP at index %d" % index)
-    return { "message": "Not Found"}, 404
 
 def get_uploads(index):
     """ Get ticket upload in History """
@@ -83,24 +85,30 @@ def get_uploads(index):
     logger.info("Retrieving ticket upload at index %d" % index)
     current_index = 0
     try:
+        count=0
         for msg in consumer:
+            # msg = json.loads(msg.value.decode('utf-8'))
             msg_str = msg.value.decode('utf-8')
             msg = json.loads(msg_str)
-            current_index += 1
-
-            if current_index == index:
-                return msg, 200
+            # print(type(msg))
+            # print(msg['type'])
             
-
-            if current_index > index:
-                break
-    # Find the event at the index you want and
-    # return code 200
-    # i.e., return event, 200
+            if msg['type']=='upload':
+                # print("here")
+                # msg_str = msg.value.decode('utf-8')
+                if count==index:
+                    return msg['payload'], 200
+        
+                count+=1
+            # print(type(msg))
+            # Find the event at the index you want and
+            # return code 200
+            # i.e., return event, 200
     except:
         logger.error("No more messages found")
-        logger.error("Could not find ticket upload at index %d" % index)
-    return { "message": "Not Found"}, 404
+
+    logger.error("Could not find Ammunition reading at index %d" % index)
+    return {"message": "Not Found"}, 404
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
