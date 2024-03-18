@@ -12,6 +12,6 @@ events:
 retries:
   retry_count: 10
 sleepy_time:
-  sleep_in_sec: 1
+  sleep_in_sec: 2
 
 
