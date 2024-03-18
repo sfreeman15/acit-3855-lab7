@@ -11,6 +11,8 @@ import logging
 import logging.config
 from pykafka import KafkaClient
 import time
+from sqlalchemy import create_engine
+import sqlalchemy.pool as pool
 
 MAX_EVENTS= 5
 EVENT_FILE = "events.json"
