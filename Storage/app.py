@@ -149,9 +149,9 @@ def process_messages():
             time.sleep(sleepy_time)
             logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
             currnet_retry_count += 1
-    if current_retry_count == max_retries:
-            logger.error("Failed to connect to Kafka after %d retries. Exiting.", max_retries)
-            return
+            if current_retry_count == max_retries:
+                    logger.error("Failed to connect to Kafka after %d retries. Exiting.", max_retries)
+                    return
         
     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
