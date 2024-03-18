@@ -139,15 +139,21 @@ def process_messages():
     # This is blocking - it will wait for a new message
     current_retry_count = 0 
 
-    while current_retry_count < app_config["retries"]:
+    while current_retry_count < max_retries:
         try:
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["events"]["topic"])]
-        except:
-            logger.error("Connection failed")
+            logger.info("Successfully connected to Kafka")
+            break  # Break out of the loop if connection succeeds
+        except Exception as e:
+            logger.error("Connection failed: %s", str(e))
+            logger.info("Retrying to connect to Kafka. Retry count: %d", current_retry_count)
             time.sleep(sleepy_time)
-            logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+            current_retry_count += 1
 
+    if current_retry_count == max_retries:
+        logger.error("Failed to connect to Kafka after %d retries. Exiting.", max_retries)
+        return
         
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
