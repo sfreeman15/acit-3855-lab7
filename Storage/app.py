@@ -17,6 +17,7 @@ import json
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread
+import time
 
 
 
@@ -129,15 +130,25 @@ def process_messages():
     """ Process event messages """
     logger.debug("Start of process_messages function")
     hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
-    client = KafkaClient(hosts=hostname)
-    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    sleepy_time = app_config["sleep_in_sec"]
     
     # Create a consume on a consumer group, that only reads new messages
     # (uncommitted messages) when the service re-starts (i.e., it doesn't
     # read all the old messages from the history in the message queue).
     consumer = topic.get_simple_consumer(consumer_group=b'event_group',reset_offset_on_start=False,auto_offset_reset=OffsetType.LATEST)
     # This is blocking - it will wait for a new message
-    
+    current_retry_count = 0 
+
+    while current_retry_count < app_config["retries"]:
+        try:
+            client = KafkaClient(hosts=hostname)
+            topic = client.topics[str.encode(app_config["events"]["topic"])]
+        except:
+            logger.error("Connection failed")
+            time.sleep(sleepy_time)
+            logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+
+        
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
         msg = json.loads(msg_str)

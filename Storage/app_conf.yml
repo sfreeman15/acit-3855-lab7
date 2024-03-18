@@ -9,4 +9,7 @@ events:
   hostname: acit-3855-kafka.westus3.cloudapp.azure.com
   port: 9092
   topic: events
+retries: 10
+sleep_in_sec: 5
+
 
