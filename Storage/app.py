@@ -144,14 +144,14 @@ def process_messages():
         try:
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["events"]["topic"])]
+            if current_retry_count == max_retries:
+            break
         except:
             logger.error("Connection failed")
             time.sleep(sleepy_time)
             logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
             current_retry_count += 1
-            if current_retry_count == max_retries:
-                    logger.error("Failed to connect to Kafka after %d retries. Exiting.", max_retries)
-                    return
+           
         
     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
