@@ -43,7 +43,7 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 def populate_stats():
     """ Periodically update stats """
     logger.info("Started Periodic Processing")
-    hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
+    hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
         # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
 
     client = KafkaClient(hosts=hostname)
