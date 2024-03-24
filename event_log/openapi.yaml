@@ -34,7 +34,7 @@ components:
   schemas:
     event_stats:
       required:
-      - event_stat
+      - event_stats
       properties:
         event_stats:
           type: object

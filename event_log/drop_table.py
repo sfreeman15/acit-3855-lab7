@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('stats.sqlite')
+conn = sqlite3.connect('event_log.sqlite')
 
 c = conn.cursor()
 c.execute('''
