@@ -31,7 +31,6 @@ logger = logging.getLogger('basicLogger')
 import logging
 
 # Configure logging
-logging.basicConfig(filename='/app/event_logger.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 DB_ENGINE = create_engine("sqlite:///event_logs.sqlite")
 Base.metadata.bind = DB_ENGINE

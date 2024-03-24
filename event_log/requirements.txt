@@ -4,4 +4,4 @@ swagger-ui-bundle==0.0.8
 APScheduler==3.6.3
 SQLAlchemy==1.3.22
 pytz
-pykafka==2.4.0
+pykafka==2.8.0
