@@ -40,6 +40,9 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 
 def event_stats():
+   pass
+
+def process_message():
     logger.info("Request has started")
 
     session = DB_SESSION()
@@ -55,19 +58,19 @@ def event_stats():
             msg = json.loads(msg_str)
             logger.info("Message: %s" % msg)
             payload = msg["payload"]
-    session = DB_SESSION()
+            session = DB_SESSION()
 
-    event_log = EventLogs(payload["id"],
-                          payload["message"],
-                          payload["message_code"],
-                          payload["date_time"])
-    if event_log:
-         session.add(event_log)
-    
-    
-    logger.info("Request has completed")
-    
-    consumer.commit_offsets()
+            event_log = EventLogs(payload["id"],
+                                payload["message"],
+                                payload["message_code"],
+                                payload["date_time"])
+            if event_log:
+                session.add(event_log)
+            
+            
+            logger.info("Message proccesing completed")
+            
+            consumer.commit_offsets()
 
 
 
