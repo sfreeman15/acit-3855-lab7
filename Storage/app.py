@@ -151,6 +151,10 @@ def process_messages():
         try:    
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["events"]["topic"])]
+            producer = topic.get_sync_producer()
+            msg = "0002: Ready to comsume messages on RESTful API"
+            msg_str = json.dumps(msg)
+            producer.produce(msg.encode('utf-8'))
             logger.info("Connected!")
             break #yahoo 
         except:

@@ -16,6 +16,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import json
 from flask_cors import CORS, cross_origin
 from pytz import timezone
+from pykafka import KafkaClient
+
 
 
 
@@ -33,15 +35,30 @@ logger = logging.getLogger('basicLogger')
 DB_ENGINE = create_engine("sqlite:///stats.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
+
+
+
  
 
 def populate_stats():
     """ Periodically update stats """
     logger.info("Started Periodic Processing")
+    hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
+        # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
+
+    client = KafkaClient(hosts=hostname)
+    topic = client.topics[str.encode(app_config["events"]["topic"])]
+    producer = topic.get_sync_producer()
+    msg = "0003: Connected to processor"
+    msg_str = json.dumps(msg)
+    producer.produce(msg.encode('utf-8'))
+    logger.info("Connected!")
+
     time = datetime.datetime.now()
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     session = DB_SESSION()
+    
     most_recent_statistic = session.query(Stats).order_by(Stats.last_updated.desc()).first()
     #SOURCE: https://stackoverflow.com/questions/8551952/how-to-get-last-record
     
@@ -86,6 +103,11 @@ def populate_stats():
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
 
+    if len(upload_data) or len(purchase_data) > 25:
+        msg = "0004: Received more than 25 messages"
+        msg_str = json.dumps(msg)
+        producer.produce(msg.encode('utf-8'))
+         
     
     max_value_p = most_recent_statistic.max_tp_readings
     max_value_u = most_recent_statistic.max_tu_readings
