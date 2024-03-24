@@ -42,8 +42,9 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 def event_stats():
    pass
 
-def process_message():
+def process_messages():
     logger.info("Request has started")
+    hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
 
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
