@@ -150,7 +150,7 @@ def process_messages():
         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
         try:    
             client = KafkaClient(hosts=hostname)
-            topic = client.topics[str.encode(app_config["events"]["topic"])]
+            topic = client.topics[str.encode(app_config["event_log"]["topic"])]
             producer = topic.get_sync_producer()
             msg = "0002: Ready to comsume messages on RESTful API"
             msg_str = json.dumps(msg)

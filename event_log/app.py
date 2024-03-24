@@ -39,7 +39,25 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 
 def event_stats():
-   pass
+    logger.info("Request has started")
+    session = DB_SESSION()
+    pst = timezone('America/Vancouver')
+
+    most_recent_statistic = session.query(EventLogs).order_by(EventLogs.id.desc()).first()
+    last_updated_pst = most_recent_statistic.last_updated.astimezone(pst)
+    if most_recent_statistic is None:
+         logger.error("ERROR, NOTHING IN DATA IN TABLES")
+         return "Statistics do not exist", 404
+    # # stats_dict = most_recent_statistic.json()
+    # pydict = {"id": most_recent_statistic.num_tp_readings,
+    #           "num_tu_readings":most_recent_statistic.num_tu_readings,
+    #           "max_tp_readings": most_recent_statistic.max_tp_readings,
+    #           "max_tu_readings": most_recent_statistic.max_tu_readings,
+    #           "last_updated": last_updated_pst.strftime('%Y-%m-%d %H:%M:%S %Z%z')}
+    session.close()
+    logger.info("Request has completed")
+    # return pydict, 200
+    pass
 
 def process_messages():
     logger.info("Request has started")

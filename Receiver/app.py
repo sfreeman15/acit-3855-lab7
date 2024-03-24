@@ -44,11 +44,11 @@ max_retries = app_config["retries"]['retry_count']
 while current_retry_count < app_config["retries"]['retry_count']:
     logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
     try:    
-        hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
+        hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
         # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
 
         client = KafkaClient(hosts=hostname)
-        topic = client.topics[str.encode(app_config["events"]["topic"])]
+        topic = client.topics[str.encode(app_config["event_log"]["topic"])]
         producer = topic.get_sync_producer()
         msg = "0001: Ready to receive messages on RESTful API"
         msg_str = json.dumps(msg)
