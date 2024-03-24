@@ -47,7 +47,7 @@ def populate_stats():
         # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
 
     client = KafkaClient(hosts=hostname)
-    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+    topic = client.topics[str.encode(app_config["events"]["topic"])]
     producer = topic.get_sync_producer()
     msg = "0003: Connected to processor"
     msg_str = json.dumps(msg)
