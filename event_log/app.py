@@ -64,21 +64,21 @@ def event_stats():
     if event_log:
          session.add(event_log)
     
-    session.commit()
-    session.close()
-        
-    most_recent_statistic = session.query(Stats).order_by(Stats.id.desc()).first()
-    last_updated_pst = most_recent_statistic.last_updated.astimezone(pst)
-    if most_recent_statistic is None:
-         logger.error("ERROR, NOTHING IN DATA IN TABLES")
-         return "Statistics do not exist", 404
-    # stats_dict = most_recent_statistic.json()
-    pydict = {"num_tp_readings": most_recent_statistic.num_tp_readings,
-              "num_tu_readings":most_recent_statistic.num_tu_readings,
-              "max_tp_readings": most_recent_statistic.max_tp_readings,
-              "max_tu_readings": most_recent_statistic.max_tu_readings,
-              "last_updated": last_updated_pst.strftime('%Y-%m-%d %H:%M:%S %Z%z')}
-    session.close()
-    logger.info("Request has completed")
-    return pydict, 200
     
+    logger.info("Request has completed")
+    
+    consumer.commit_offsets()
+
+
+
+app = connexion.FlaskApp(__name__, specification_dir='')
+app.add_api("openapi.yaml",
+            strict_validation=True,
+            validate_responses=True)
+
+
+
+if __name__ == "__main__":  
+# run our standalone gevent server
+    app.run(port=8120, host="0.0.0.0")
+
