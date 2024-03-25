@@ -18,7 +18,7 @@ from flask_cors import CORS, cross_origin
 from pytz import timezone
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
-from sqlalchemy import func
+
 import logging
 
 
@@ -47,18 +47,11 @@ def event_stats():
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
-    
 
-    statistics = session.query(EventLogs).all()
+    statistics = session.query(EventLogs.message_code).all()
     logger.info(statistics)
-    for event_log in statistics:
-        logger.info(event_log.message_code)  # Access the 'message_code' column
-        logger.info(event_log.message)      # Access the 'message' column
-        logger.info(event_log.date_time)   # Access the 'created_at' column
-
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
-    # Create an empty dictionary to s+tore the counts
     stat_dict = {
         "0001": 0,
         "0002": 0,
@@ -66,25 +59,28 @@ def event_stats():
         "0004": 0
     }
 
-    # Query to count occurrences of each message code
-    message_code_counts = session.query(EventLogs.message_code, func.count(EventLogs.message_code)).group_by(EventLogs.message_code).all()
+    for code_tuple in statistics:
+        code = code_tuple[0]  # Extracting the message code from the tuple
+        if code == "0001":
+            stat_dict["0001"] += 1
+        elif code == "0002": 
+            stat_dict["0002"] += 1
+        elif code == "0003": 
+            stat_dict["0003"] += 1
+        elif code == "0004": 
+            stat_dict["0004"] += 1
 
-    # Update the counts in the dictionary
-    for message_code, count in message_code_counts:
-        stat_dict[message_code] = count
 
     session.close()
     logger.info("Request has completed")
-
-
-    
     return stat_dict, 200
 
 
 def process_messages():
     logger.info("Request has started")
-
     hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
+
+    pst = timezone('America/Vancouver')
     client = KafkaClient(hosts=hostname)
 
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
@@ -92,34 +88,29 @@ def process_messages():
 
     for message in consumer:
         # Decode the message and parse JSON
-        try:
-            msg = json.loads(message.value.decode('utf-8'))
-        except json.JSONDecodeError as e:
-            logger.error(f"Error decoding JSON: {e}")
-            continue  # Skip processing this message and proceed to the next one
+        msg = json.loads(message.value.decode('utf-8'))
         
         # Access the message fields
-        msg_code = msg.get("message_code")
-        message_content = msg.get("message")
+        message_code = msg["message_code"]
+        message_content = msg["message"]
 
-        if msg_code in ["0001", "0002", "0003", "0004"] and message_content:  # Check if it's one of the messages you want to store
-            try:
-                # Open a session and add the event log to the database
-                session = DB_SESSION()
-                event_log = EventLogs(message_code=msg_code, message=message_content)
-                session.add(event_log)
-                session.commit()  # Commit changes to the database
-                session.close()
-                logger.info("Message processed and stored successfully.")
-            except Exception as e:
-                logger.error(f"Error processing message: {e}")
-                session.rollback()  # Rollback changes in case of an error
+    for msg in consumer:
+        msg_str = msg.value.decode('utf-8')
+        msg = json.loads(msg_str)
+        logger.info("Message: %s" % msg)
+        payload = msg["payload"]
+
+        session = DB_SESSION()
+        event_log = EventLogs(message=message_content,message_code=message_code)
+    
+        if event_log:
+            session.add(event_log)
+
+        logger.info("Message processing completed")
 
         consumer.commit_offsets()
-
-    logger.info("Message processing completed.")
-
-
+        session.commit()  # Commit any pending transactions
+        session.close()   # Close the session to release resources
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
