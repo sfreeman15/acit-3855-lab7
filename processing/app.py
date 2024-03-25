@@ -109,7 +109,7 @@ def populate_stats():
     if len(upload_data) or len(purchase_data) > 25:
         msg = { "message_code": "0004", "message": "Received more than 25 messages"}
         msg_str = json.dumps(msg)
-        producer.produce(msg.encode('utf-8'))
+        producer.produce(msg_str.encode('utf-8'))
          
     
     max_value_p = most_recent_statistic.max_tp_readings
