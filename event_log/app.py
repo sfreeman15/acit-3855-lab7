@@ -41,38 +41,39 @@ Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 
-
 def event_stats():
     logger.info("Request has started")
     session = DB_SESSION()
-    pst = timezone('America/Vancouver')
 
     statistics = session.query(EventLogs.message_code).all()
 
-    # last_updated_pst = statistics.date_time.astimezone(pst)
- 
     stat_dict = {
-                "0001": 0,
-                "0002": 0,
-                "0003": 0,
-                "0004": 0
-                }
+        "0001": 0,
+        "0002": 0,
+        "0003": 0,
+        "0004": 0
+    }
 
-    for code in statistics:
+    for code_tuple in statistics:
+        code = code_tuple[0]
         if code == "0001":
-            stat_dict["0001"] +=1
-        if code == "0002": 
-            stat_dict["0002"] +=1
-        if code == "0003": 
-            stat_dict["0003"] +=1
-        if code == "0004": 
-            stat_dict["0004"] +=1
-
-
+            stat_dict["0001"] += 1
+        elif code == "0002": 
+            stat_dict["0002"] += 1
+        elif code == "0003": 
+            stat_dict["0003"] += 1
+        elif code == "0004": 
+            stat_dict["0004"] += 1
 
     session.close()
     logger.info("Request has completed")
-    return stat_dict, 200
+    
+    # Return the response with the event_stats property
+    response = {
+        "event_stats": stat_dict
+    }
+    return response, 200
+
 
 
 def process_messages():
