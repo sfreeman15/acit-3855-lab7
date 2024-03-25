@@ -65,8 +65,8 @@ def event_stats():
     logger.info("Request has completed")
 
     # Construct the response object conforming to the schema
-    response = {"event_stats": stat_dict}
-    return response
+    # response = {"event_stats": stat_dict}
+    return stat_dict, 200
 
 
 
