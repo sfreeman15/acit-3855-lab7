@@ -35,7 +35,7 @@ logger = logging.getLogger('basicLogger')
 
 # Configure logging
 
-DB_ENGINE = create_engine("sqlite:///event_log.sqlite")
+DB_ENGINE = create_engine("sqlite:///event_logs.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
