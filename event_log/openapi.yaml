@@ -33,17 +33,22 @@ paths:
 components:
   schemas:
     event_stats:
-      required:
-      - event_stats
+      type: object
       properties:
-        event_stats:
-          type: object
-          additionalProperties:
-            type: string
-          example:
-            0001: 10,
-            0002: 22,
-            0003: 12,
-            0004: "98"
-
-       
+        "0001":
+          type: integer
+          description: Number of events with code "0001"
+        "0002":
+          type: integer
+          description: Number of events with code "0002"
+        "0003":
+          type: integer
+          description: Number of events with code "0003"
+        "0004":
+          type: integer
+          description: Number of events with code "0004"
+      example:
+        "0001": 10
+        "0002": 22
+        "0003": 12
+        "0004": 98
