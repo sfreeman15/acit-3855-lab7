@@ -117,16 +117,17 @@ def process_messages():
         message_content = msg["message"]
 
         session = DB_SESSION()
-        event_log = EventLogs(message=message_content,message_code=message_code)
+        event_log = EventLogs(message=message_content,message_code=message_code, date_time=datetime.datetime.now())
     
-        if event_log:
-            session.add(event_log)
+    
+        session.add(event_log)
 
         logger.info("Message processing completed")
 
-        consumer.commit_offsets()
         session.commit()  # Commit any pending transactions
         session.close()   # Close the session to release resources
+        consumer.commit_offsets()
+
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
