@@ -21,6 +21,7 @@ from pykafka.common import OffsetType
 import sqlite3
 import os.path
 import time
+from threading import Thread
 
 
 import logging
@@ -148,5 +149,11 @@ app.add_api("openapi.yaml",
 
 if __name__ == "__main__":  
 # run our standalone gevent server
+    t1 = Thread(target=process_messages)
+    
+    t1.daemon = True 
+
+    t1.start()
+
     app.run(port=8120, host="0.0.0.0")
 
