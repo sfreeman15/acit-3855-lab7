@@ -44,6 +44,36 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def event_stats():
     logger.info("Request has started")
+    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
+
+    pst = timezone('America/Vancouver')
+    client = KafkaClient(hosts=hostname)
+
+    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+    consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
+
+    for message in consumer:
+        # Decode the message and parse JSON
+        msg = json.loads(message.value.decode('utf-8'))
+        
+        # Access the message fields
+        msg_code = msg["message_code"]
+        message_content = msg["message"]
+
+
+        session = DB_SESSION()
+        event_log = EventLogs(message_code=msg_code,
+                              message=message_content)
+        if event_log:
+            session.add(event_log)
+
+        logger.info("Message processing completed")
+
+        consumer.commit_offsets()
+        session.commit()  # Commit any pending transactions
+        session.close()   # Close the session to release resources
+
+    logger.info("Request has started for event_stats")
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
@@ -73,39 +103,43 @@ def event_stats():
 
     session.close()
     logger.info("Request has completed")
+
+
+
+
     return stat_dict, 200
 
 
-def process_messages():
-    logger.info("Request has started")
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
+# def process_messages():
+#     logger.info("Request has started")
+#     hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
 
-    pst = timezone('America/Vancouver')
-    client = KafkaClient(hosts=hostname)
+#     pst = timezone('America/Vancouver')
+#     client = KafkaClient(hosts=hostname)
 
-    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-    consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
+#     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+#     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
-    for message in consumer:
-        # Decode the message and parse JSON
-        msg = json.loads(message.value.decode('utf-8'))
+#     for message in consumer:
+#         # Decode the message and parse JSON
+#         msg = json.loads(message.value.decode('utf-8'))
         
-        # Access the message fields
-        msg_code = msg["message_code"]
-        message_content = msg["message"]
+#         # Access the message fields
+#         msg_code = msg["message_code"]
+#         message_content = msg["message"]
 
 
-        session = DB_SESSION()
-        event_log = EventLogs(message_code=msg_code,
-                              message=message_content)
-        if event_log:
-            session.add(event_log)
+#         session = DB_SESSION()
+#         event_log = EventLogs(message_code=msg_code,
+#                               message=message_content)
+#         if event_log:
+#             session.add(event_log)
 
-        logger.info("Message processing completed")
+#         logger.info("Message processing completed")
 
-        consumer.commit_offsets()
-        session.commit()  # Commit any pending transactions
-        session.close()   # Close the session to release resources
+#         consumer.commit_offsets()
+#         session.commit()  # Commit any pending transactions
+#         session.close()   # Close the session to release resources
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
