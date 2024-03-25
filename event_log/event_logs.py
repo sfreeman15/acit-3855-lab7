@@ -3,7 +3,7 @@ from base import Base
 
 class EventLogs(Base):
     """ Processing Event Log Messages """
-    __tablename__ = "event_logs"
+    __tablename__ = "event_log"
 
     id = Column(Integer, primary_key=True)
     message = Column(String, nullable=False)
