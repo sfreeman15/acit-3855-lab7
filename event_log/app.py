@@ -56,6 +56,7 @@ def event_stats():
 
     for message in consumer:
         # Decode the message and parse JSON
+        logger.info("Received message:", message.value)
         msg = json.loads(message.value.decode('utf-8'))
         
         # Access the message fields
