@@ -35,33 +35,27 @@ with open('log_conf.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
+
 database_path = "/app/event_log.sqlite"  # Update this with the correct path
 
+# Check if the database file exists
+if not os.path.isfile(database_path):
+    conn = sqlite3.connect(database_path)
+    c = conn.cursor()
 
-# Check if the database file exists and create the table if not
-if not os.path.exists(database_path):
-    try:
-        # Attempt to create the database file and table
-        conn = sqlite3.connect(database_path)
-        c = conn.cursor()
+    c.execute('''
+        CREATE TABLE event_log (
+            event_id INTEGER PRIMARY KEY ASC,
+            message TEXT NOT NULL,
+            message_code TEXT NOT NULL,
+            date_time VARCHAR(100) NOT NULL
+        )
+    ''')
 
-        c.execute('''
-            CREATE TABLE event_log (
-                event_id INTEGER PRIMARY KEY ASC,
-                message TEXT NOT NULL,
-                message_code TEXT NOT NULL,
-                date_time VARCHAR(100) NOT NULL
-            )
-        ''')
+    conn.commit()
+    conn.close()
 
-        conn.commit()
-        conn.close()
-        logger.info("Database table created successfully")
-    except Exception as e:
-        # Log any errors that occur during database creation
-        logger.error(f"Error creating database table: {e}")
-else:
-    logger.info("Database file already exists")
+
 
 DB_ENGINE = create_engine("sqlite:///event_log.sqlite")
 
@@ -114,36 +108,31 @@ def process_messages():
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
-    # Begin processing messages
     for message in consumer:
-        try:
-            # Decode the message and parse JSON
-            msg = json.loads(message.value.decode('utf-8'))
+        # Decode the message and parse JSON
+        msg = json.loads(message.value.decode('utf-8'))
         
-            # Access the message fields
-            message_code = msg["message_code"]
-            message_content = msg["message"]
+        # Access the message fields
+        message_code = msg["message_code"]
+        message_content = msg["message"]
 
-            # Log the message
-            logger.info("Message: %s" % msg)
+    for msg in consumer:
+        msg_str = msg.value.decode('utf-8')
+        msg = json.loads(msg_str)
+        logger.info("Message: %s" % msg)
+        payload = msg["payload"]
 
-            # Process the message
-            session = DB_SESSION()
-            event_log = EventLogs(message=message_content, message_code=message_code)
+        session = DB_SESSION()
+        event_log = EventLogs(message=message_content,message_code=message_code)
+    
+        if event_log:
             session.add(event_log)
-            session.commit()  # Commit any pending transactions
-            session.close()   # Close the session to release resources
 
-            # Commit offsets after processing a message
-            consumer.commit_offsets()
+        logger.info("Message processing completed")
 
-            logger.info("Message processing completed")
-        except Exception as e:
-            logger.error(f"Error processing message: {e}")
-
-# Call the function to start message processing
-process_messages()
-
+        consumer.commit_offsets()
+        session.commit()  # Commit any pending transactions
+        session.close()   # Close the session to release resources
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
