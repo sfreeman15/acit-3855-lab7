@@ -18,7 +18,7 @@ from flask_cors import CORS, cross_origin
 from pytz import timezone
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
-
+from sqlalchemy import func
 import logging
 
 
@@ -56,6 +56,7 @@ def event_stats():
 
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
+    # Create an empty dictionary to store the counts
     stat_dict = {
         "0001": 0,
         "0002": 0,
@@ -63,17 +64,12 @@ def event_stats():
         "0004": 0
     }
 
-    for code_tuple in statistics:
-        code = code_tuple[0]  # Extracting the message code from the tuple
-        if code == "0001":
-            stat_dict["0001"] += 1
-        elif code == "0002": 
-            stat_dict["0002"] += 1
-        elif code == "0003": 
-            stat_dict["0003"] += 1
-        elif code == "0004": 
-            stat_dict["0004"] += 1
+    # Query to count occurrences of each message code
+    message_code_counts = session.query(EventLogs.message_code, func.count(EventLogs.message_code)).group_by(EventLogs.message_code).all()
 
+    # Update the counts in the dictionary
+    for message_code, count in message_code_counts:
+        stat_dict[message_code] = count
 
     session.close()
     logger.info("Request has completed")
