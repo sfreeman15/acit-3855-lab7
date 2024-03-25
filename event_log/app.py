@@ -50,9 +50,9 @@ def event_stats():
     statistics = session.query(EventLogs).all()
     logger.info(statistics)
     for event_log in statistics:
-        print(event_log.message_code)  # Access the 'message_code' column
-        print(event_log.message)      # Access the 'message' column
-        print(event_log.created_at)   # Access the 'created_at' column
+        logger.info(event_log.message_code)  # Access the 'message_code' column
+        logger.info(event_log.message)      # Access the 'message' column
+        logger.info(event_log.date_time)   # Access the 'created_at' column
 
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
