@@ -1,6 +1,6 @@
 version: 1
 datastore:
-  filename: stats.sqlite
+  filename: event_log.sqlite
 eventstore:
   url: http://localhost:8120
 event_log:
