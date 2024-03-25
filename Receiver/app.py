@@ -53,7 +53,8 @@ while current_retry_count < app_config["retries"]['retry_count']:
         producer = topic.get_sync_producer()
         msg = { "message_code": "0001", "message": "Ready to receive messages on RESTful API"}
         msg_str = json.dumps(msg)
-        producer.produce(msg.encode('utf-8'))
+        producer.produce(msg_str.encode('utf-8'))
+        logger.info(msg_str)
         
         break #yahoo 
     except:

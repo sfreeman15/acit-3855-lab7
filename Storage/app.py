@@ -157,7 +157,7 @@ def process_messages():
             msg = { "message_code": "0002", "message": "Ready to comsume messages on RESTful API"}
 
             msg_str = json.dumps(msg)
-            producer.produce(msg.encode('utf-8'))
+            producer.produce(msg_str.encode('utf-8'))
             break #yahoo 
         except:
             logger.error("Connection failed")

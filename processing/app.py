@@ -55,7 +55,7 @@ def populate_stats():
     msg = { "message_code": "0003", "message": "Connected to processor"}
 
     msg_str = json.dumps(msg)
-    producer.produce(msg.encode('utf-8'))
+    producer.produce(msg_str.encode('utf-8'))
 
     time = datetime.datetime.now()
     
