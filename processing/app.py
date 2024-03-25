@@ -43,6 +43,8 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 def populate_stats():
     """ Periodically update stats """
     logger.info("Started Periodic Processing")
+
+    logger.info("Connected!")
     hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
 
     client = KafkaClient(hosts=hostname)
@@ -54,7 +56,6 @@ def populate_stats():
 
     msg_str = json.dumps(msg)
     producer.produce(msg.encode('utf-8'))
-    logger.info("Connected!")
 
     time = datetime.datetime.now()
     

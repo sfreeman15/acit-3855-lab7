@@ -149,6 +149,7 @@ def process_messages():
     while current_retry_count < app_config["retries"]['retry_count']:
         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
         try:    
+            logger.info("Connected!")
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["event_log"]["topic"])]
             producer = topic.get_sync_producer()
@@ -157,7 +158,6 @@ def process_messages():
 
             msg_str = json.dumps(msg)
             producer.produce(msg.encode('utf-8'))
-            logger.info("Connected!")
             break #yahoo 
         except:
             logger.error("Connection failed")

@@ -44,6 +44,7 @@ max_retries = app_config["retries"]['retry_count']
 while current_retry_count < app_config["retries"]['retry_count']:
     logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
     try:    
+        logger.info("Connected!")
         hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
         # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
 
@@ -53,7 +54,6 @@ while current_retry_count < app_config["retries"]['retry_count']:
         msg = { "message_code": "0001", "message": "Ready to receive messages on RESTful API"}
         msg_str = json.dumps(msg)
         producer.produce(msg.encode('utf-8'))
-        logger.info("Connected!")
         
         break #yahoo 
     except:
