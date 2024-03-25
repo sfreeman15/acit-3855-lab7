@@ -109,31 +109,36 @@ def process_messages():
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
+    # Begin processing messages
     for message in consumer:
-        # Decode the message and parse JSON
-        msg = json.loads(message.value.decode('utf-8'))
+        try:
+            # Decode the message and parse JSON
+            msg = json.loads(message.value.decode('utf-8'))
         
-        # Access the message fields
-        message_code = msg["message_code"]
-        message_content = msg["message"]
+            # Access the message fields
+            message_code = msg["message_code"]
+            message_content = msg["message"]
 
-    for msg in consumer:
-        msg_str = msg.value.decode('utf-8')
-        msg = json.loads(msg_str)
-        logger.info("Message: %s" % msg)
-        payload = msg["payload"]
+            # Log the message
+            logger.info("Message: %s" % msg)
 
-        session = DB_SESSION()
-        event_log = EventLogs(message=message_content,message_code=message_code)
-    
-        if event_log:
+            # Process the message
+            session = DB_SESSION()
+            event_log = EventLogs(message=message_content, message_code=message_code)
             session.add(event_log)
+            session.commit()  # Commit any pending transactions
+            session.close()   # Close the session to release resources
 
-        logger.info("Message processing completed")
+            # Commit offsets after processing a message
+            consumer.commit_offsets()
 
-        consumer.commit_offsets()
-        session.commit()  # Commit any pending transactions
-        session.close()   # Close the session to release resources
+            logger.info("Message processing completed")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+
+# Call the function to start message processing
+process_messages()
+
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
