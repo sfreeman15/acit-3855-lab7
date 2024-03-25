@@ -49,7 +49,9 @@ def populate_stats():
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     producer = topic.get_sync_producer()
 
-    msg = { "0003": "Connected to processor"}
+
+    msg = { "message_code": "0003", "message": "Connected to processor"}
+
     msg_str = json.dumps(msg)
     producer.produce(msg.encode('utf-8'))
     logger.info("Connected!")
@@ -104,8 +106,7 @@ def populate_stats():
     upload_data = upload_request.json()
 
     if len(upload_data) or len(purchase_data) > 25:
-        msg = { "0004": "Received more than 25 messages"}
-
+        msg = { "message_code": "0004", "message": "Received more than 25 messages"}
         msg_str = json.dumps(msg)
         producer.produce(msg.encode('utf-8'))
          

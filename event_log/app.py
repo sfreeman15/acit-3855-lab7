@@ -77,34 +77,44 @@ def event_stats():
 
 
 def process_messages():
-    logger.info("Request has started")
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
-
+    logger.debug("Start of process_messages function")
+    hostname = "%s:%d" % (app_config["events"]["hostname"], app_config["events"]["port"])
     pst = timezone('America/Vancouver')
     client = KafkaClient(hosts=hostname)
 
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
-
+    
     for msg in consumer:
         msg_str = msg.value.decode('utf-8')
         msg = json.loads(msg_str)
         logger.info("Message: %s" % msg)
-        payload = msg["payload"]
-
+        
+        # Extract message data from the message received
+        message_code = msg.get("message_code")
+        message = msg.get("message")
+        
+        # Here you can perform any processing required with the message data
+        
+        # Example: Storing the message in the database
         session = DB_SESSION()
-        event_log = EventLogs(payload["event_id"],
-                              payload["message"],
-                              payload["message_code"],
-                              payload["date_time"])
-        if event_log:
+        try:
+            event_log = EventLogs(
+                message_code=message_code,
+                message=message,
+                date_time=datetime.now()  # You may adjust this based on your requirements
+            )
             session.add(event_log)
-
-        logger.info("Message processing completed")
+            session.commit()
+            logger.info("Message processing completed")
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            session.rollback()
+        finally:
+            session.close()
 
         consumer.commit_offsets()
-        session.commit()  # Commit any pending transactions
-        session.close()   # Close the session to release resources
+
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",

@@ -152,7 +152,9 @@ def process_messages():
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["event_log"]["topic"])]
             producer = topic.get_sync_producer()
-            msg = {"0002": "Ready to comsume messages on RESTful API"}
+
+            msg = { "message_code": "0002", "message": "Ready to comsume messages on RESTful API"}
+
             msg_str = json.dumps(msg)
             producer.produce(msg.encode('utf-8'))
             logger.info("Connected!")
