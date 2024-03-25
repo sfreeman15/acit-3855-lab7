@@ -63,14 +63,7 @@ def event_stats():
         msg_code = msg.get("message_code")
         message_content = msg.get("message")
 
-    logger.info(msg_code)
-    logger.info(message_content)
-    statistics = session.query(EventLogs).all()
-    logger.info(statistics)
-    for event_log in statistics:
-        logger.info(event_log.message_code)  # Access the 'message_code' column
-        logger.info(event_log.message)      # Access the 'message' column
-        logger.info(event_log.date_time)   # Access the 'created_at' column
+ 
 
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
@@ -126,7 +119,7 @@ def process_messages():
             try:
                 # Open a session and add the event log to the database
                 session = DB_SESSION()
-                event_log = EventLogs(message_code=msg_code, message=message_content, date_time=datetime.now(timezone('America/Vancouver')))
+                event_log = EventLogs(message_code=msg_code, message=message_content)
                 session.add(event_log)
                 session.commit()  # Commit changes to the database
                 session.close()
