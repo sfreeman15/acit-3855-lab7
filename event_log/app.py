@@ -47,27 +47,28 @@ def event_stats():
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
-    statistics= session.query(EventLogs).all()
-    logger.info(statistics)
+
+    statistics = session.query(EventLogs.message_code).all()
+
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
     stat_dict = {
-                "0001": 0,
-                "0002": 0,
-                "0003": 0,
-                "0004": 0
-                }
+        "0001": 0,
+        "0002": 0,
+        "0003": 0,
+        "0004": 0
+    }
 
-    for code in statistics:
+    for code_tuple in statistics:
+        code = code_tuple[0]  # Extracting the message code from the tuple
         if code == "0001":
-            stat_dict["0001"] +=1
-        if code == "0002": 
-            stat_dict["0002"] +=1
-        if code == "0003": 
-            stat_dict["0003"] +=1
-        if code == "0004": 
-            stat_dict["0004"] +=1
-
+            stat_dict["0001"] += 1
+        elif code == "0002": 
+            stat_dict["0002"] += 1
+        elif code == "0003": 
+            stat_dict["0003"] += 1
+        elif code == "0004": 
+            stat_dict["0004"] += 1
 
 
     session.close()
