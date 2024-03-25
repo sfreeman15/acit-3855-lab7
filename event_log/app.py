@@ -85,18 +85,19 @@ def process_messages():
 
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
-    
-    for msg in consumer:
-        msg_str = msg.value.decode('utf-8')
-        msg = json.loads(msg_str)
-        logger.info("Message: %s" % msg)
-        payload = msg["payload"]
+
+    for message in consumer:
+        # Decode the message and parse JSON
+        msg = json.loads(message.value.decode('utf-8'))
+        
+        # Access the message fields
+        msg_code = msg["message_code"]
+        message_content = msg["message"]
+
 
         session = DB_SESSION()
-        event_log = EventLogs(payload["event_id"],
-                              payload["message"],
-                              payload["message_code"],
-                              payload["date_time"])
+        event_log = EventLogs(message_code=msg_code,
+                              message=message_content)
         if event_log:
             session.add(event_log)
 
