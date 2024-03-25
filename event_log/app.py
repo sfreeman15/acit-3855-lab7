@@ -18,6 +18,9 @@ from flask_cors import CORS, cross_origin
 from pytz import timezone
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
+import sqlite3
+import os.path
+
 
 import logging
 
@@ -32,8 +35,28 @@ with open('log_conf.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
+database_path = "/app/event_log.sqlite"  # Update this with the correct path
 
-# Configure logging
+
+# Check if the database file exists
+if not os.path.exists(database_path):
+    # If the file doesn't exist, create the database and table
+    conn = sqlite3.connect(database_path)
+    c = conn.cursor()
+
+    c.execute('''
+        CREATE TABLE event_log (
+            event_id INTEGER PRIMARY KEY ASC,
+            message TEXT NOT NULL,
+            message_code TEXT NOT NULL,
+            date_time VARCHAR(100) NOT NULL
+        )
+    ''')
+
+    conn.commit()
+    conn.close()
+
+
 
 DB_ENGINE = create_engine("sqlite:///event_log.sqlite")
 
