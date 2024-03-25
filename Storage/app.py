@@ -50,27 +50,6 @@ MAX_EVENTS= 5
 EVENT_FILE = "events.json"
 
 
-
-# def purchase(body):
-  
-
-#     session = DB_SESSION()
-#     tp =  TicketPurchase(body['ticket_id'],
-#                          body['concert_name'],  
-#                          body["seat_number"],
-#                          body["artist"],
-#                          body['date'],
-#                          body['venue'],
-#                          body['price'],
-#                          body['trace_id'])
-#     session.add(tp)
-#     session.commit()
-#     session.close()
-  
-#     logger.debug("Stored Purchase request with a trace ID of %s", body["trace_id"])
-#     return NoContent, 201
-
-
 def get_purchases(start_timestamp, end_timestamp):
     """ Gets new ticket purchases between the start and end timestamps """
     session = DB_SESSION()
@@ -90,31 +69,6 @@ def get_purchases(start_timestamp, end_timestamp):
     logger.info("Query for ticket purchases after %s returns %d results" % (start_timestamp, len(results_list)))
     return results_list, 200
 
-
-
-
-# def upload_ticket(body):
-   
-
-#     session = DB_SESSION()
-
-#     tu = TicketUpload(body['ticket_id'],
-#                    body['seller_name'],
-#                    body['seat_number'],
-#                    body["artist"],
-#                    body['concert_name'],
-#                    body['date'],
-#                    body["venue"],
-#                    body["price"],
-#                    body['trace_id'])
-
-    
-#     session.add(tu)
-
-#     session.commit()
-#     session.close()
-#     logger.debug("Stored Upload_ticket request with a trace ID of %s", body["trace_id"])
-#     return NoContent, 201
 
 
 

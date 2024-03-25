@@ -36,7 +36,7 @@ with open('log_conf.yml', 'r') as f:
 
 
 logger = logging.getLogger('basicLogger')
-
+logger.info(f'Connecting to DB.Hostname:"{app_config["datastore"]["filename"]}')
 
 database_path = "/app/event_log.sqlite"  # Update this with the correct path
 
@@ -57,14 +57,10 @@ if not os.path.isfile(database_path):
     conn.commit()
     conn.close()
 
-
-
 DB_ENGINE = create_engine("sqlite:///event_log.sqlite")
 
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
-
-
 
 def event_stats():
     logger.info("Request has started")
@@ -118,17 +114,16 @@ def process_messages():
             time.sleep(sleepy_time)
             current_retry_count += 1
    
-    for message in consumer:
+    for msg in consumer:
         # Decode the message and parse JSON
-        msg = json.loads(message.value.decode('utf-8'))
-        
-        # Access the message fields
-        message_code = msg["message_code"]
-        message_content = msg["message"]
-        logger.info(message_code)
-        logger.info(message_content)
+        msg_str = msg.value.decode('utf-8')
+        msg = json.loads(msg_str)
+
         session = DB_SESSION()
-        event_log = EventLogs(message=message_content,message_code=message_code, date_time=datetime.datetime.now())
+
+        date_time = datetime.datetime.now()        
+
+        event_log = EventLogs(message=msg["message"],message_code=msg["message_code"], date_time=date_time)
     
     
         session.add(event_log)
