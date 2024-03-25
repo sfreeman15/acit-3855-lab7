@@ -48,33 +48,29 @@ def event_stats():
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
-    statistics= session.query(EventLogs).all()
-    # last_updated_pst = statistics.date_time.astimezone(pst)
-    if statistics is None:
-         logger.error("ERROR, NOTHING IN DATA IN TABLES")
-         return "Statistics do not exist", 404
+    statistics = session.query(EventLogs).all()
+
     stat_dict = {
-                "0001": 0,
-                "0002": 0,
-                "0003": 0,
-                "0004": 0
-                }
-
+        "0001": 0,
+        "0002": 0,
+        "0003": 0,
+        "0004": 0
+    }
+    #the OpenAPI schema expects the response to have an event_stats property even in error cases
     for code in statistics:
-        if code == "0001":
-            stat_dict[code] +=1
-        if code == "0002": 
-            stat_dict[code] +=1
-        if code == "0003": 
-            stat_dict[code] +=1
-        if code == "0004": 
-            stat_dict[code] +=1
-
-
+        if code.message_code == "0001":
+            stat_dict["0001"] += 1
+        elif code.message_code == "0002": 
+            stat_dict["0002"] += 1
+        elif code.message_code == "0003": 
+            stat_dict["0003"] += 1
+        elif code.message_code == "0004": 
+            stat_dict["0004"] += 1
 
     session.close()
     logger.info("Request has completed")
-    return stat_dict, 200
+
+    return stat_dict
 
 
 def process_messages():
