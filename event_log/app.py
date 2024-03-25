@@ -38,25 +38,30 @@ logger = logging.getLogger('basicLogger')
 database_path = "/app/event_log.sqlite"  # Update this with the correct path
 
 
-# Check if the database file exists
+# Check if the database file exists and create the table if not
 if not os.path.exists(database_path):
-    # If the file doesn't exist, create the database and table
-    conn = sqlite3.connect(database_path)
-    c = conn.cursor()
+    try:
+        # Attempt to create the database file and table
+        conn = sqlite3.connect(database_path)
+        c = conn.cursor()
 
-    c.execute('''
-        CREATE TABLE event_log (
-            event_id INTEGER PRIMARY KEY ASC,
-            message TEXT NOT NULL,
-            message_code TEXT NOT NULL,
-            date_time VARCHAR(100) NOT NULL
-        )
-    ''')
+        c.execute('''
+            CREATE TABLE event_log (
+                event_id INTEGER PRIMARY KEY ASC,
+                message TEXT NOT NULL,
+                message_code TEXT NOT NULL,
+                date_time VARCHAR(100) NOT NULL
+            )
+        ''')
 
-    conn.commit()
-    conn.close()
-
-
+        conn.commit()
+        conn.close()
+        logger.info("Database table created successfully")
+    except Exception as e:
+        # Log any errors that occur during database creation
+        logger.error(f"Error creating database table: {e}")
+else:
+    logger.info("Database file already exists")
 
 DB_ENGINE = create_engine("sqlite:///event_log.sqlite")
 
