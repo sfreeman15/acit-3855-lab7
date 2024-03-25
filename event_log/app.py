@@ -48,26 +48,31 @@ def event_stats():
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
-    statistics = session.query(EventLogs).all()
-
+    statistics= session.query(EventLogs).all()
+    # last_updated_pst = statistics.date_time.astimezone(pst)
+ 
     stat_dict = {
-        "0001": 0,
-        "0002": 0,
-        "0003": 0,
-        "0004": 0
-    }
+                "0001": 0,
+                "0002": 0,
+                "0003": 0,
+                "0004": 0
+                }
 
     for code in statistics:
-        if code.message_code in stat_dict:
-            stat_dict[code.message_code] += 1
+        if code == "0001":
+            stat_dict["0001"] +=1
+        if code == "0002": 
+            stat_dict["0002"] +=1
+        if code == "0003": 
+            stat_dict["0003"] +=1
+        if code == "0004": 
+            stat_dict["0004"] +=1
+
+
 
     session.close()
     logger.info("Request has completed")
-
-    # Construct the response object conforming to the schema
-    # response = {"event_stats": stat_dict}
     return stat_dict, 200
-
 
 
 def process_messages():
@@ -112,6 +117,6 @@ app.add_api("openapi.yaml",
 
 if __name__ == "__main__":  
 # run our standalone gevent server
-
+    create_table.create_event_log_table()
     app.run(port=8120, host="0.0.0.0")
 
