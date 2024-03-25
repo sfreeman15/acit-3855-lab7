@@ -17,6 +17,8 @@ import json
 from flask_cors import CORS, cross_origin
 from pytz import timezone
 from pykafka import KafkaClient
+import logging
+
 
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
@@ -28,7 +30,6 @@ with open('log_conf.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
-import logging
 
 # Configure logging
 

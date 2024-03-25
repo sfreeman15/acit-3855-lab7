@@ -85,9 +85,6 @@ services:
       - "8120:8120" 
     depends_on:
       - "kafka"  
-      - "receiver"
-      - "storage"
-      - "processing"
       
 # Names our volume
 volumes:
