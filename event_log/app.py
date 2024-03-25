@@ -115,7 +115,8 @@ def process_messages():
         # Access the message fields
         message_code = msg["message_code"]
         message_content = msg["message"]
-
+        logger.info(message_code)
+        logger.info(message_content)
         session = DB_SESSION()
         event_log = EventLogs(message=message_content,message_code=message_code, date_time=datetime.datetime.now())
     
