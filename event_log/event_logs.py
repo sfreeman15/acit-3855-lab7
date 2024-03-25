@@ -24,6 +24,5 @@ class EventLogs(Base):
         stats_dict['id'] = self.id,
         stats_dict['message']= self.message,
         stats_dict['message_code'] = self.message_code,
-        stats_dict['date_time'] = self.date_time,
-        stats_dict['last_updated'] = self.last_updated.strftime("%Y-%m-%dT%H:%M:%S")
+        stats_dict['date_time'] = self.date_time.strftime("%Y-%m-%dT%H:%M:%S")
         return stats_dict
