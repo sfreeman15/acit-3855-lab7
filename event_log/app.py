@@ -58,19 +58,13 @@ def event_stats():
     }
 
     for code in statistics:
-        if code.message_code == "0001":
-            stat_dict["0001"] += 1
-        elif code.message_code == "0002": 
-            stat_dict["0002"] += 1
-        elif code.message_code == "0003": 
-            stat_dict["0003"] += 1
-        elif code.message_code == "0004": 
-            stat_dict["0004"] += 1
+        if code.message_code in stat_dict:
+            stat_dict[code.message_code] += 1
 
     session.close()
     logger.info("Request has completed")
 
-    # Ensure the response always contains the 'event_stats' property
+    # Construct the response object conforming to the schema
     response = {"event_stats": stat_dict}
     return response
 
