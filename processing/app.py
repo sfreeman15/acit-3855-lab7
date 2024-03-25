@@ -48,7 +48,8 @@ def populate_stats():
     client = KafkaClient(hosts=hostname)
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     producer = topic.get_sync_producer()
-    msg = "0003: Connected to processor"
+
+    msg = { "0003": "Connected to processor"}
     msg_str = json.dumps(msg)
     producer.produce(msg.encode('utf-8'))
     logger.info("Connected!")
@@ -103,7 +104,8 @@ def populate_stats():
     upload_data = upload_request.json()
 
     if len(upload_data) or len(purchase_data) > 25:
-        msg = "0004: Received more than 25 messages"
+        msg = { "0004": "Received more than 25 messages"}
+
         msg_str = json.dumps(msg)
         producer.produce(msg.encode('utf-8'))
          

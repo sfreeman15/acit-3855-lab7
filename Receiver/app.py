@@ -50,7 +50,7 @@ while current_retry_count < app_config["retries"]['retry_count']:
         client = KafkaClient(hosts=hostname)
         topic = client.topics[str.encode(app_config["event_log"]["topic"])]
         producer = topic.get_sync_producer()
-        msg = "0001: Ready to receive messages on RESTful API"
+        msg = { "0001": "Ready to receive messages on RESTful API"}
         msg_str = json.dumps(msg)
         producer.produce(msg.encode('utf-8'))
         logger.info("Connected!")
