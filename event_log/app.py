@@ -49,7 +49,7 @@ def event_stats():
 
 
     statistics = session.query(EventLogs.message_code).all()
-
+    logger.info(statistics)
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
     stat_dict = {
