@@ -80,32 +80,30 @@ def process_messages():
     logger.info("Request has started")
     hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
 
-    session = DB_SESSION()
     pst = timezone('America/Vancouver')
     client = KafkaClient(hosts=hostname)
 
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
-
     for msg in consumer:
-            msg_str = msg.value.decode('utf-8')
-            msg = json.loads(msg_str)
-            logger.info("Message: %s" % msg)
-            payload = msg["payload"]
-            session = DB_SESSION()
+        msg_str = msg.value.decode('utf-8')
+        msg = json.loads(msg_str)
+        logger.info("Message: %s" % msg)
+        payload = msg["payload"]
 
-            event_log = EventLogs(payload["event_id"],
-                                payload["message"],
-                                payload["message_code"],
-                                payload["date_time"])
-            if event_log:
-                session.add(event_log)
-            
-            
-            logger.info("Message proccesing completed")
-            
-            consumer.commit_offsets()
+        session = DB_SESSION()
+        event_log = EventLogs(payload["event_id"],
+                              payload["message"],
+                              payload["message_code"],
+                              payload["date_time"])
+        if event_log:
+            session.add(event_log)
+        logger.info("Message processing completed")
+        
+        consumer.commit_offsets()
+        session.commit()  # Commit any pending transactions
+        session.close()   # Close the session to release resources
 
 
 
