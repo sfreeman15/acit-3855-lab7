@@ -18,6 +18,7 @@ from flask_cors import CORS, cross_origin
 from pytz import timezone
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
+import create_table
 
 import logging
 
@@ -118,5 +119,6 @@ app.add_api("openapi.yaml",
 
 if __name__ == "__main__":  
 # run our standalone gevent server
+    create_table.create_event_log_table()
     app.run(port=8120, host="0.0.0.0")
 
