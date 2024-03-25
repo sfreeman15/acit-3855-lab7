@@ -97,6 +97,10 @@ def event_stats():
     return stat_dict, 200
 
 
+from datetime import datetime
+from pytz import timezone
+from pykafka.common import OffsetType
+
 def process_messages():
     logger.info("Request has started")
 
@@ -108,17 +112,21 @@ def process_messages():
 
     for message in consumer:
         # Decode the message and parse JSON
-        msg = json.loads(message.value.decode('utf-8'))
+        try:
+            msg = json.loads(message.value.decode('utf-8'))
+        except json.JSONDecodeError as e:
+            logger.error(f"Error decoding JSON: {e}")
+            continue  # Skip processing this message and proceed to the next one
         
         # Access the message fields
         msg_code = msg.get("message_code")
         message_content = msg.get("message")
 
-        if msg_code == "0001" and message_content:  # Check if it's the message you want to store
+        if msg_code in ["0001", "0002", "0003", "0004"] and message_content:  # Check if it's one of the messages you want to store
             try:
                 # Open a session and add the event log to the database
                 session = DB_SESSION()
-                event_log = EventLogs(message_code=msg_code, message=message_content, created_at=datetime.now(timezone('America/Vancouver')))
+                event_log = EventLogs(message_code=msg_code, message=message_content, date_time=datetime.now(timezone('America/Vancouver')))
                 session.add(event_log)
                 session.commit()  # Commit changes to the database
                 session.close()
