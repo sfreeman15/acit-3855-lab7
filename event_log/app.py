@@ -44,19 +44,34 @@ def event_stats():
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
-    most_recent_statistic = session.query(EventLogs).order_by(EventLogs.id.desc()).first()
-    last_updated_pst = most_recent_statistic.last_updated.astimezone(pst)
-    if most_recent_statistic is None:
+    statistics= session.query(EventLogs).all()
+    last_updated_pst = statistics.date_time.astimezone(pst)
+    if statistics is None:
          logger.error("ERROR, NOTHING IN DATA IN TABLES")
          return "Statistics do not exist", 404
-  
+    stat_dict = {
+                "0001": 0,
+                "0002": 0,
+                "0003": 0,
+                "0004": 0
+                }
+
+    for code in statistics:
+        if code == "0001":
+            stat_dict[code] +=1
+        if code == "0002": 
+            stat_dict[code] +=1
+        if code == "0003": 
+            stat_dict[code] +=1
+        if code == "0004": 
+            stat_dict[code] +=1
 
 
-  
+
     session.close()
     logger.info("Request has completed")
-    # return pydict, 200
-    pass
+    return stat_dict, 200
+
 
 def process_messages():
     logger.info("Request has started")
