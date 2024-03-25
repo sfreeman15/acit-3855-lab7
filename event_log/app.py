@@ -20,6 +20,7 @@ from pykafka import KafkaClient
 from pykafka.common import OffsetType
 import sqlite3
 import os.path
+import time
 
 
 import logging
@@ -100,14 +101,22 @@ def event_stats():
 
 def process_messages():
     logger.info("Request has started")
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
-
-    pst = timezone('America/Vancouver')
-    client = KafkaClient(hosts=hostname)
-
-    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-    consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
-
+    retries = app_config["retries"]["retry_count"]
+    sleepy_time = app_config["sleepy_time"]["sleep_in_sec"]
+    while current_retry_count < retries:
+        try:
+            logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+            hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
+            client = KafkaClient(hosts=hostname)
+            topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+            consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
+            logger.info("Connected to Kafka!")
+            break  # Exit the loop if connection successful
+        except:
+            logger.error("Connection failed")
+            time.sleep(sleepy_time)
+            current_retry_count += 1
+   
     for message in consumer:
         # Decode the message and parse JSON
         msg = json.loads(message.value.decode('utf-8'))
