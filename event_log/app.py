@@ -56,7 +56,7 @@ def event_stats():
         "0003": 0,
         "0004": 0
     }
-    #the OpenAPI schema expects the response to have an event_stats property even in error cases
+
     for code in statistics:
         if code.message_code == "0001":
             stat_dict["0001"] += 1
@@ -70,7 +70,10 @@ def event_stats():
     session.close()
     logger.info("Request has completed")
 
-    return stat_dict
+    # Ensure the response always contains the 'event_stats' property
+    response = {"event_stats": stat_dict}
+    return response
+
 
 
 def process_messages():
