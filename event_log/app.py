@@ -17,6 +17,8 @@ import json
 from flask_cors import CORS, cross_origin
 from pytz import timezone
 from pykafka import KafkaClient
+from pykafka.common import OffsetType
+
 import logging
 
 
