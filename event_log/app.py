@@ -48,6 +48,7 @@ def event_stats():
     pst = timezone('America/Vancouver')
 
     statistics= session.query(EventLogs).all()
+    logger.info(statistics)
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
     stat_dict = {
