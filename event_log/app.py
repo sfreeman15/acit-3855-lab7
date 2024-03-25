@@ -79,10 +79,6 @@ def event_stats():
     return stat_dict, 200
 
 
-from datetime import datetime
-from pytz import timezone
-from pykafka.common import OffsetType
-
 def process_messages():
     logger.info("Request has started")
 
