@@ -78,7 +78,7 @@ def event_stats():
 
 def process_messages():
     logger.info("Request has started")
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
+    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
 
     pst = timezone('America/Vancouver')
     client = KafkaClient(hosts=hostname)
@@ -99,13 +99,12 @@ def process_messages():
                               payload["date_time"])
         if event_log:
             session.add(event_log)
+
         logger.info("Message processing completed")
-        
+
         consumer.commit_offsets()
         session.commit()  # Commit any pending transactions
         session.close()   # Close the session to release resources
-
-
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
