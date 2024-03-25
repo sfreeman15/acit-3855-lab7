@@ -48,7 +48,7 @@ def event_stats():
     pst = timezone('America/Vancouver')
 
     statistics= session.query(EventLogs).all()
-    last_updated_pst = statistics.date_time.astimezone(pst)
+    # last_updated_pst = statistics.date_time.astimezone(pst)
     if statistics is None:
          logger.error("ERROR, NOTHING IN DATA IN TABLES")
          return "Statistics do not exist", 404
@@ -95,7 +95,7 @@ def process_messages():
             payload = msg["payload"]
             session = DB_SESSION()
 
-            event_log = EventLogs(payload["id"],
+            event_log = EventLogs(payload["event_id"],
                                 payload["message"],
                                 payload["message_code"],
                                 payload["date_time"])
