@@ -20,9 +20,10 @@ class EventLogs(Base):
 
     def to_dict(self):
         """ Dictionary Representation of statistics """
-        stats_dict = {}
-        stats_dict['id'] = self.id,
-        stats_dict['message']= self.message,
-        stats_dict['message_code'] = self.message_code,
-        stats_dict['date_time'] = self.date_time.strftime("%Y-%m-%dT%H:%M:%S")
+        stats_dict = {
+            'id': self.id,
+            'message': self.message,
+            'message_code': self.message_code,
+            'date_time': self.date_time.strftime("%Y-%m-%dT%H:%M:%S")
+        }
         return stats_dict
