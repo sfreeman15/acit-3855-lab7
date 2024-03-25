@@ -44,36 +44,6 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def event_stats():
     logger.info("Request has started")
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
-
-    pst = timezone('America/Vancouver')
-    client = KafkaClient(hosts=hostname)
-
-    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-    consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
-
-    for message in consumer:
-        # Decode the message and parse JSON
-        msg = json.loads(message.value.decode('utf-8'))
-        
-        # Access the message fields
-        msg_code = msg["message_code"]
-        message_content = msg["message"]
-
-
-        session = DB_SESSION()
-        event_log = EventLogs(message_code=msg_code,
-                              message=message_content)
-        if event_log:
-            session.add(event_log)
-
-        logger.info("Message processing completed")
-
-        consumer.commit_offsets()
-        session.commit()  # Commit any pending transactions
-        session.close()   # Close the session to release resources
-
-    logger.info("Request has started for event_stats")
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
@@ -105,41 +75,48 @@ def event_stats():
     logger.info("Request has completed")
 
 
-
-
+    
     return stat_dict, 200
 
 
-# def process_messages():
-#     logger.info("Request has started")
-#     hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
+from datetime import datetime
+from pytz import timezone
+from pykafka.common import OffsetType
 
-#     pst = timezone('America/Vancouver')
-#     client = KafkaClient(hosts=hostname)
+def process_messages():
+    logger.info("Request has started")
 
-#     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-#     consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
+    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
+    client = KafkaClient(hosts=hostname)
 
-#     for message in consumer:
-#         # Decode the message and parse JSON
-#         msg = json.loads(message.value.decode('utf-8'))
+    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+    consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
+
+    for message in consumer:
+        # Decode the message and parse JSON
+        msg = json.loads(message.value.decode('utf-8'))
         
-#         # Access the message fields
-#         msg_code = msg["message_code"]
-#         message_content = msg["message"]
+        # Access the message fields
+        msg_code = msg.get("message_code")
+        message_content = msg.get("message")
 
+        if msg_code == "0001" and message_content:  # Check if it's the message you want to store
+            try:
+                # Open a session and add the event log to the database
+                session = DB_SESSION()
+                event_log = EventLogs(message_code=msg_code, message=message_content, created_at=datetime.now(timezone('America/Vancouver')))
+                session.add(event_log)
+                session.commit()  # Commit changes to the database
+                session.close()
+                logger.info("Message processed and stored successfully.")
+            except Exception as e:
+                logger.error(f"Error processing message: {e}")
+                session.rollback()  # Rollback changes in case of an error
 
-#         session = DB_SESSION()
-#         event_log = EventLogs(message_code=msg_code,
-#                               message=message_content)
-#         if event_log:
-#             session.add(event_log)
+        consumer.commit_offsets()
 
-#         logger.info("Message processing completed")
+    logger.info("Message processing completed.")
 
-#         consumer.commit_offsets()
-#         session.commit()  # Commit any pending transactions
-#         session.close()   # Close the session to release resources
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
