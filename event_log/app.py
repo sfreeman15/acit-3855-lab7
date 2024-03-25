@@ -47,23 +47,14 @@ def event_stats():
     session = DB_SESSION()
     pst = timezone('America/Vancouver')
 
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
-    client = KafkaClient(hosts=hostname)
+    
 
-    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-    consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
-
-
-    for message in consumer:
-        # Decode the message and parse JSON
-        logger.info("Received message:", message.value)
-        msg = json.loads(message.value.decode('utf-8'))
-        
-        # Access the message fields
-        msg_code = msg.get("message_code")
-        message_content = msg.get("message")
-
- 
+    statistics = session.query(EventLogs).all()
+    logger.info(statistics)
+    for event_log in statistics:
+        logger.info(event_log.message_code)  # Access the 'message_code' column
+        logger.info(event_log.message)      # Access the 'message' column
+        logger.info(event_log.date_time)   # Access the 'created_at' column
 
     # last_updated_pst = statistics.date_time.astimezone(pst)
  
@@ -127,6 +118,7 @@ def process_messages():
         consumer.commit_offsets()
 
     logger.info("Message processing completed.")
+
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
