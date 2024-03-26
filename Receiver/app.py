@@ -78,7 +78,7 @@ while current_retry_count < app_config["retries"]['retry_count']:
         time.sleep(sleepy_time)
         current_retry_count += 1
            
-        
+
 
 
 def purchase(body):

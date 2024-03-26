@@ -107,11 +107,11 @@ def populate_stats():
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
 
-    if len(upload_data) or len(purchase_data) > 25:
+    if len(upload_data) + len(purchase_data) > 25:
         msg = { "message_code": "0004", "message": "Received more than 25 messages"}
         msg_str = json.dumps(msg)
         producer2.produce(msg_str.encode('utf-8'))
-         
+
     
     max_value_p = most_recent_statistic.max_tp_readings
     max_value_u = most_recent_statistic.max_tu_readings
@@ -159,9 +159,22 @@ def populate_stats():
     logger.info("Processing Period has ended.")
     
 
+def producer():
+    hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
 
+    client = KafkaClient(hosts=hostname)
+    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+    producer2 = topic.get_sync_producer()
+    producer2 = topic.get_sync_producer()
+
+
+    msg = { "message_code": "0003", "message": "Connected to processor"}
+
+    msg_str = json.dumps(msg)
+    producer2.produce(msg_str.encode('utf-8'))
 
 def init_scheduler():
+    
     sched = BackgroundScheduler(daemon=True, timezone=timezone('America/Los_Angeles'))
     sched.add_job(populate_stats,
     'interval',
