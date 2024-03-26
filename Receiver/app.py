@@ -44,6 +44,21 @@ max_retries = app_config["retries"]['retry_count']
 while current_retry_count < app_config["retries"]['retry_count']:
     logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
     try:    
+        client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
+        topic = client.topics[str.encode(app_config["events"]["topic"])]
+        producer = topic.get_sync_producer()
+
+        logger.info("Connected!")
+        break #yahoo 
+    except:
+        logger.error("Connection failed")
+        time.sleep(sleepy_time)
+        current_retry_count += 1
+
+
+while current_retry_count < app_config["retries"]['retry_count']:
+    logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+    try:    
         logger.info("Connected!")
         hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
         # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
