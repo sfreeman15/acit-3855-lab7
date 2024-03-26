@@ -1,5 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, Float
 from base import Base
+import datetime
 
 class EventLogs(Base):
     """ Processing Event Log Messages """
@@ -15,13 +16,15 @@ class EventLogs(Base):
         """ Initializes a processing statistics object """
         self.message = message
         self.message_code = message_code
-        self.date_time = date_time
-
+        if date_time is None:
+            self.date_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+        else:
+            self.date_time = date_time
     def to_dict(self):
         """ Dictionary Representation of statistics """
-        stats_dict = {
-            'message': self.message,
-            'message_code': self.message_code,
-            'date_time': self.date_time.strftime("%Y-%m-%dT%H:%M:%S")
-        }
-        return stats_dict
+        dict = {}
+
+        dict["message"] = self.message
+        dict["message_code"] = self.message_code
+        dict["date_time"] = self.date_time
+        return dict

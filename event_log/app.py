@@ -63,7 +63,7 @@ Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def process_messages():
-    logger.debug("Request has started")
+    logger.info("Request has started")
     retries = app_config["retries"]["retry_count"]
     sleepy_time = app_config["sleepy_time"]["sleep_in_sec"]
     while current_retry_count < retries:
@@ -94,7 +94,7 @@ def process_messages():
     
         session.add(event_log)
 
-        logger.info("Message processing completed")
+        logger.debug("Message processing completed")
 
         session.commit()  # Commit any pending transactions
         session.close()   # Close the session to release resources
