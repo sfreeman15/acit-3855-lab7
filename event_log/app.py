@@ -128,37 +128,23 @@ def process_messages():
 
 def event_stats():
     logger.info("Request has started")
-    session = DB_SESSION()
-    pst = timezone('America/Vancouver')
+    try:
+        session = DB_SESSION()
+        pst = timezone('America/Vancouver')
 
+        # Query and count occurrences of each message code
+        statistics = session.query(EventLogs.message_code, func.count()).group_by(EventLogs.message_code).all()
+        logger.info(statistics)
 
-    statistics = session.query(EventLogs.message_code).all()
-    logger.info(statistics)
-    # last_updated_pst = statistics.date_time.astimezone(pst)
- 
-    stat_dict = {
-        "0001": 0,
-        "0002": 0,
-        "0003": 0,
-        "0004": 0
-    }
+        # Create a dictionary to store counts of each message code
+        stat_dict = {code: count for code, count in statistics}
 
-    for code_tuple in statistics:
-        code = code_tuple[0]  # Extracting the message code from the tuple
-        if code == "0001":
-            stat_dict["0001"] += 1
-        elif code == "0002": 
-            stat_dict["0002"] += 1
-        elif code == "0003": 
-            stat_dict["0003"] += 1
-        elif code == "0004": 
-            stat_dict["0004"] += 1
-
-
-    session.close()
-    logger.info("Request has completed")
-    return stat_dict, 200
-
+        session.close()
+        logger.info("Request has completed")
+        return stat_dict, 200
+    except Exception as e:
+        logger.error(f"Error processing event stats: {e}")
+        return {"error": "An error occurred while processing event stats"}, 500
 
 
 
