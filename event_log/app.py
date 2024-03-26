@@ -127,6 +127,9 @@ def process_messages():
 
 
 
+# Assuming you have imported necessary modules and defined DB_SESSION
+from sqlalchemy import func
+
 def event_stats():
     logger.info("Request has started")
     try:
@@ -135,7 +138,7 @@ def event_stats():
 
         # Query and count occurrences of each message code
         statistics = session.query(EventLogs.message_code, func.count()).group_by(EventLogs.message_code).all()
-        logger.info(statistics)  # Debugging line to print statistics
+        logger.info(statistics)
 
         # Initialize stat_dict
         stat_dict = {
@@ -147,6 +150,8 @@ def event_stats():
 
         # Iterate over statistics and update stat_dict
         for code, count in statistics:
+            # Ensure code is a string by converting it to str
+            code = str(code)
             stat_dict[code] = count
 
         session.close()
@@ -155,6 +160,7 @@ def event_stats():
     except Exception as e:
         logger.error(f"Error processing event stats: {e}")
         return {"error": "An error occurred while processing event stats"}, 500
+
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
