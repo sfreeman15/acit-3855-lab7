@@ -104,10 +104,10 @@ def process_messages():
             #     continue  # Skip processing this message
             
             og_message = message["message"]
-            code = message["message_code"]
+            code =message["message_code"]
             
             # Log the message
-            # logger.info(f"Message: {message.strip()}")  # Log the message
+            logger.info(f"Message: {message.strip()}")  # Log the message
 
             session = DB_SESSION()
 
@@ -127,9 +127,6 @@ def process_messages():
             consumer.commit_offsets()
 
 
-
-# Assuming you have imported necessary modules and defined DB_SESSION
-from sqlalchemy import func
 
 def event_stats():
     logger.info("Request has started")
@@ -161,6 +158,8 @@ def event_stats():
     except Exception as e:
         logger.error(f"Error processing event stats: {e}")
         return {"error": "An error occurred while processing event stats"}, 500
+
+
 
 
 

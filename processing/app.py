@@ -20,7 +20,8 @@ from pykafka import KafkaClient
 
 
 
-
+sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
+max_retries = app_config["retries"]['retry_count']
 
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
@@ -37,7 +38,24 @@ Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 
+current_retry_count = 0 
 
+
+def producer():
+    while current_retry_count < app_config["retries"]['retry_count']:
+        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+        hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
+
+        client = KafkaClient(hosts=hostname)
+        topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+        producer2 = topic.get_sync_producer()
+        producer2 = topic.get_sync_producer()
+
+
+        msg = { "message_code": "0003", "message": "Connected to processor"}
+
+        msg_str = json.dumps(msg)
+        producer2.produce(msg_str.encode('utf-8'))
 
 
 def populate_stats():
@@ -140,9 +158,6 @@ def populate_stats():
     stats = Stats(num_tp_readings=most_recent_statistic.num_tp_readings + len(purchase_data), num_tu_readings=most_recent_statistic.num_tu_readings + len(upload_data), max_tp_readings=max_value_p, max_tu_readings=max_value_u, last_updated=last_hour_datetime)
     
     
-    
-
-
 
     
     if stats:
@@ -159,19 +174,6 @@ def populate_stats():
     logger.info("Processing Period has ended.")
     
 
-def producer():
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
-
-    client = KafkaClient(hosts=hostname)
-    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-    producer2 = topic.get_sync_producer()
-    producer2 = topic.get_sync_producer()
-
-
-    msg = { "message_code": "0003", "message": "Connected to processor"}
-
-    msg_str = json.dumps(msg)
-    producer2.produce(msg_str.encode('utf-8'))
 
 def init_scheduler():
     
