@@ -88,11 +88,14 @@ def process_messages():
 
 
     for msg in consumer:
+        logger.info(msg)
+        msg_str = msg.value.decode('utf-8')
+        logger.info(msg_str)
         try:
+
             msg_str = msg.value.decode('utf-8')
             msg = json.loads(msg_str)
             logger.info("Message: %s" % msg)
-            logger.info(msg_str)
             msg_info = msg["message"]
             msg_code = msg["message_code"]
 
