@@ -86,6 +86,16 @@ def process_messages():
         return
     logger.info("adding to database:")
 
+
+    for msg in consumer:
+        try:
+            msg_str = msg.value.decode('utf-8')
+            logger.debug(f"Raw message: {msg_str}")  # Log the raw message
+            msg = json.loads(msg_str)
+            logger.info(msg)
+            msg_info = msg["message"]
+            msg_code = msg["message_code"]
+
     for msg in consumer:
         try:
             msg_str = msg.value.decode('utf-8')
@@ -106,18 +116,28 @@ def process_messages():
                 logger.error("Empty message content")
                 continue  # Skip processing this message
             
+            logger.debug(f"JSON part: {json_part}")  # Log the JSON part before parsing
+            
             # Parse the JSON part into a dictionary
             msg_dict = json.loads(json_part)
             
             # Extract message information
             msg_info = msg_dict.get("message")
             msg_code = msg_dict.get("message_code")
-            
-            # Process the message as before
-            # ...
-            
+
+            session = DB_SESSION()
+
+            date_time = datetime.datetime.now()        
+
+            event_log = EventLogs(message=msg_info, message_code=msg_code, date_time=date_time)
+        
+            session.add(event_log)
+
+            logger.debug("Message processing completed")
+            session.commit()  # Commit any pending transactions
         except Exception as e:
             logger.error(f"Error processing message: {e}")
+            session.rollback()  # Rollback transaction in case of error
         finally:
             session.close()   # Close the session to release resources
             consumer.commit_offsets()
