@@ -90,16 +90,11 @@ def process_messages():
     for msg in consumer:
         try:
             msg_str = msg.value.decode('utf-8')
-
-            logger.debug(f"Raw message: {msg_str}")  # Log the raw message
-            # Decode raw message payload to string
-            msg_str = msg.value.decode('utf-8')
-
-            # Parse string into dictionary
-            msg_dict = json.loads(msg_str)
-            # Parse JSON message
             msg = json.loads(msg_str)
-            logger.info(msg)
+            logger.info("Message: %s" % msg)
+            logger.info(msg_str)
+            msg_info = msg["message"]
+            msg_code = msg["message_code"]
 
             # Extract message information
             msg_info = msg.get("message")
