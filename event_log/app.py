@@ -105,6 +105,8 @@ def process_messages():
         session.close()   # Close the session to release resources
         consumer.commit_offsets()
 
+def testing():
+    logger.info("log something")
 
 def event_stats():
     logger.info("Request has started")
