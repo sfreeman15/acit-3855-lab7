@@ -100,29 +100,16 @@ def process_messages():
                 logger.error("Invalid message format")
                 continue  # Skip processing this message
             
-            msg_code, json_part = parts
+            msg_code, message = parts
             
-            # Strip any leading/trailing whitespace
-            json_part = json_part.strip()
-            
-            if not json_part:
-                logger.error("Empty message content")
-                continue  # Skip processing this message
-            
-            logger.debug(f"JSON part: {json_part}")  # Log the JSON part before parsing
-            
-            # Parse the JSON part into a dictionary
-            msg_dict = json.loads(json_part)
-            
-            # Extract message information
-            msg_info = msg_dict.get("message")
-            msg_code = msg_dict.get("message_code")
+            # Log the message
+            logger.info(f"Message: {message.strip()}")  # Log the message
 
             session = DB_SESSION()
 
             date_time = datetime.datetime.now()        
 
-            event_log = EventLogs(message=msg_info, message_code=msg_code, date_time=date_time)
+            event_log = EventLogs(message=message, message_code=msg_code, date_time=date_time)
         
             session.add(event_log)
 
