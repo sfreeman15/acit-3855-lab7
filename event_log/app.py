@@ -135,19 +135,19 @@ def event_stats():
 
         # Query and count occurrences of each message code
         statistics = session.query(EventLogs.message_code, func.count()).group_by(EventLogs.message_code).all()
-        logger.info(statistics)
+        logger.info(statistics)  # Debugging line to print statistics
 
+        # Initialize stat_dict
         stat_dict = {
-                "0001": 0,
-                "0002": 0,
-                "0003": 0,
-                "0004": 0
-            }
+            "0001": 0,
+            "0002": 0,
+            "0003": 0,
+            "0004": 0
+        }
 
         # Iterate over statistics and update stat_dict
         for code, count in statistics:
             stat_dict[code] = count
-
 
         session.close()
         logger.info("Request has completed")
@@ -155,8 +155,6 @@ def event_stats():
     except Exception as e:
         logger.error(f"Error processing event stats: {e}")
         return {"error": "An error occurred while processing event stats"}, 500
-
-
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
