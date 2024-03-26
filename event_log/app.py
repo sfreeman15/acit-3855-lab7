@@ -96,14 +96,15 @@ def process_messages():
         try:
             msg_str = msg.value.decode('utf-8')
             logger.debug(f"Raw message: {msg_str}")  # Log the raw message
+            message = json.loads(msg_str)
+            # # Split the message to separate the message code
+            # parts = msg_str.split(':', 1)
+            # if len(parts) != 2:
+            #     logger.error("Invalid message format")
+            #     continue  # Skip processing this message
             
-            # Split the message to separate the message code
-            parts = msg_str.split(':', 1)
-            if len(parts) != 2:
-                logger.error("Invalid message format")
-                continue  # Skip processing this message
-            
-            msg_code, message = parts
+            og_message = message["message"]
+            code = message["message_code"]
             
             # Log the message
             logger.info(f"Message: {message.strip()}")  # Log the message
@@ -112,7 +113,7 @@ def process_messages():
 
             date_time = datetime.datetime.now()        
             date_time =  date_time.astimezone(pst)
-            event_log = EventLogs(message=message, message_code=msg_code, date_time=date_time)
+            event_log = EventLogs(message=og_message, message_code=code, date_time=date_time)
         
             session.add(event_log)
 
