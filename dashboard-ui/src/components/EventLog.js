@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import '../App.css';
 
-export default function AppStats() {
+export default function AppEvents() {
     const [isLoaded, setIsLoaded] = useState(false);
     const [stats, setStats] = useState({});
     const [error, setError] = useState(null)
