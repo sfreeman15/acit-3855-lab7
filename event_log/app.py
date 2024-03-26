@@ -84,17 +84,25 @@ def process_messages():
     if current_retry_count >= retries:
         logger.error("Maximum retries reached. Exiting process_messages.")
         return
+    logger.info("adding to database:")
+
 
     for msg in consumer:
         # Decode the message and parse JSON
         msg_str = msg.value.decode('utf-8')
         msg = json.loads(msg_str)
+        logger.info(msg)
+        msg_info = msg["message"]
+        msg_code = msg["message_code"]
 
         session = DB_SESSION()
 
         date_time = datetime.datetime.now()        
-
-        event_log = EventLogs(message=msg["message"],message_code=msg["message_code"], date_time=date_time)
+        if msg_info:
+            logger.info(f'msg_info {msg_info}')
+        if msg_code:
+            logger.infl(f'msg_code' {msg_code})
+        event_log = EventLogs(message=msg_info,message_code=msg_code, date_time=date_time)
     
     
         session.add(event_log)
