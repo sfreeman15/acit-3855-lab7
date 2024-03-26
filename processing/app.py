@@ -124,7 +124,7 @@ def populate_stats():
     upload_request = requests.get(f'{app_config["eventstore"]["url"]}/sales/upload?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
-
+    logger.info(len(upload_data) + len(purchase_data))
     if len(upload_data) + len(purchase_data) > 25:
         msg = { "message_code": "0004", "message": "Received more than 25 messages"}
         msg_str = json.dumps(msg)
