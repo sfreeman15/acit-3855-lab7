@@ -101,7 +101,7 @@ def process_messages():
         if msg_info:
             logger.info(f'msg_info {msg_info}')
         if msg_code:
-            logger.infl(f'msg_code' {msg_code})
+            logger.infl(f'msg_code {msg_code}')
         event_log = EventLogs(message=msg_info,message_code=msg_code, date_time=date_time)
     
     
