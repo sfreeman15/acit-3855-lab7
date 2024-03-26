@@ -57,7 +57,7 @@ if not os.path.isfile(database_path):
     conn.commit()
     conn.close()
 
-DB_ENGINE = create_engine("sqlite:///event_log.sqlite")
+DB_ENGINE = create_engine("sqlite:///%s" % app_config["datastore"]["filename"])
 
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
