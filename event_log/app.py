@@ -63,7 +63,7 @@ Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def process_messages():
-    logger.info("Request has started")
+    logger.debug("Request has started")
     retries = app_config["retries"]["retry_count"]
     sleepy_time = app_config["sleepy_time"]["sleep_in_sec"]
     while current_retry_count < retries:
