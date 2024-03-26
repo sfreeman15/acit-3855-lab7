@@ -20,8 +20,6 @@ from pykafka import KafkaClient
 
 
 
-sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
-max_retries = app_config["retries"]['retry_count']
 
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
@@ -30,6 +28,8 @@ with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 
+sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
+max_retries = app_config["retries"]['retry_count']
 
 logger = logging.getLogger('basicLogger')
 
