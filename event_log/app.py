@@ -91,17 +91,21 @@ def process_messages():
         try:
             msg_str = msg.value.decode('utf-8')
             logger.debug(f"Raw message: {msg_str}")  # Log the raw message
+
+            # Parse JSON message
             msg = json.loads(msg_str)
             logger.info(msg)
-            msg_info = msg["message"]
-            msg_code = msg["message_code"]
+
+            # Extract message information
+            msg_info = msg.get("message")
+            msg_code = msg.get("message_code")
 
             session = DB_SESSION()
 
-            date_time = datetime.datetime.now()        
+            date_time = datetime.datetime.now()
 
             event_log = EventLogs(message=msg_info, message_code=msg_code, date_time=date_time)
-        
+
             session.add(event_log)
 
             logger.debug("Message processing completed")
