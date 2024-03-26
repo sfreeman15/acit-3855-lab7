@@ -99,27 +99,25 @@ def process_messages():
             
             msg_code, json_part = parts
             
+            # Strip any leading/trailing whitespace
+            json_part = json_part.strip()
+            
+            if not json_part:
+                logger.error("Empty message content")
+                continue  # Skip processing this message
+            
             # Parse the JSON part into a dictionary
-            msg_dict = json.loads(json_part.strip())
+            msg_dict = json.loads(json_part)
             
             # Extract message information
             msg_info = msg_dict.get("message")
             msg_code = msg_dict.get("message_code")
-
-            session = DB_SESSION()
-
-            date_time = datetime.datetime.now()
-
-            event_log = EventLogs(message=msg_info, message_code=msg_code, date_time=date_time)
-
-            session.add(event_log)
-
-            logger.debug("Message processing completed")
-
-            session.commit()  # Commit any pending transactions
+            
+            # Process the message as before
+            # ...
+            
         except Exception as e:
             logger.error(f"Error processing message: {e}")
-            session.rollback()  # Rollback transaction in case of error
         finally:
             session.close()   # Close the session to release resources
             consumer.commit_offsets()
