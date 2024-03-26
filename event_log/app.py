@@ -66,6 +66,7 @@ def process_messages():
     logger.info("Request has started")
     retries = app_config["retries"]["retry_count"]
     sleepy_time = app_config["sleepy_time"]["sleep_in_sec"]
+    current_retry_count = 0  # Initialize the retry count
     while current_retry_count < retries:
         try:
             logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
@@ -75,11 +76,15 @@ def process_messages():
             consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
             logger.info("Connected to Kafka!")
             break  # Exit the loop if connection successful
-        except:
-            logger.error("Connection failed")
+        except Exception as e:  # Catch specific exceptions for better error handling
+            logger.error(f"Connection failed: {str(e)}")
             time.sleep(sleepy_time)
             current_retry_count += 1
-   
+
+    if current_retry_count >= retries:
+        logger.error("Maximum retries reached. Exiting process_messages.")
+        return
+
     for msg in consumer:
         # Decode the message and parse JSON
         msg_str = msg.value.decode('utf-8')
@@ -99,6 +104,7 @@ def process_messages():
         session.commit()  # Commit any pending transactions
         session.close()   # Close the session to release resources
         consumer.commit_offsets()
+
 
 def event_stats():
     logger.info("Request has started")
