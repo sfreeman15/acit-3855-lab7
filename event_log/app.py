@@ -88,30 +88,31 @@ def process_messages():
 
 
     for msg in consumer:
-        # Decode the message and parse JSON
-        msg_str = msg.value.decode('utf-8')
-        msg = json.loads(msg_str)
-        logger.info(msg)
-        msg_info = msg["message"]
-        msg_code = msg["message_code"]
+        try:
+            msg_str = msg.value.decode('utf-8')
+            msg = json.loads(msg_str)
+            logger.info(msg)
+            msg_info = msg["message"]
+            msg_code = msg["message_code"]
 
-        session = DB_SESSION()
+            session = DB_SESSION()
 
-        date_time = datetime.datetime.now()        
-        if msg_info:
-            logger.info(f'msg_info {msg_info}')
-        if msg_code:
-            logger.infl(f'msg_code {msg_code}')
-        event_log = EventLogs(message=msg_info,message_code=msg_code, date_time=date_time)
-    
-    
-        session.add(event_log)
+            date_time = datetime.datetime.now()        
 
-        logger.debug("Message processing completed")
+            event_log = EventLogs(message=msg_info, message_code=msg_code, date_time=date_time)
+        
+            session.add(event_log)
 
-        session.commit()  # Commit any pending transactions
-        session.close()   # Close the session to release resources
-        consumer.commit_offsets()
+            logger.debug("Message processing completed")
+
+            session.commit()  # Commit any pending transactions
+        except Exception as e:
+            logger.error(f"Error processing message: {e}")
+            session.rollback()  # Rollback transaction in case of error
+        finally:
+            session.close()   # Close the session to release resources
+            consumer.commit_offsets()
+
 
 
 def event_stats():
