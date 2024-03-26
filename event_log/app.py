@@ -106,8 +106,7 @@ def process_messages():
             og_message = message["message"]
             code =message["message_code"]
             
-            # Log the message
-            logger.info(f"Message: {message.strip()}")  # Log the message
+
 
             session = DB_SESSION()
 
