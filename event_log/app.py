@@ -62,40 +62,6 @@ DB_ENGINE = create_engine("sqlite:///event_log.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
-def event_stats():
-    logger.info("Request has started")
-    session = DB_SESSION()
-    pst = timezone('America/Vancouver')
-
-
-    statistics = session.query(EventLogs.message_code).all()
-    logger.info(statistics)
-    # last_updated_pst = statistics.date_time.astimezone(pst)
- 
-    stat_dict = {
-        "0001": 0,
-        "0002": 0,
-        "0003": 0,
-        "0004": 0
-    }
-
-    for code_tuple in statistics:
-        code = code_tuple[0]  # Extracting the message code from the tuple
-        if code == "0001":
-            stat_dict["0001"] += 1
-        elif code == "0002": 
-            stat_dict["0002"] += 1
-        elif code == "0003": 
-            stat_dict["0003"] += 1
-        elif code == "0004": 
-            stat_dict["0004"] += 1
-
-
-    session.close()
-    logger.info("Request has completed")
-    return stat_dict, 200
-
-
 def process_messages():
     logger.info("Request has started")
     retries = app_config["retries"]["retry_count"]
@@ -134,21 +100,58 @@ def process_messages():
         session.close()   # Close the session to release resources
         consumer.commit_offsets()
 
+def event_stats():
+    logger.info("Request has started")
+    session = DB_SESSION()
+    pst = timezone('America/Vancouver')
+
+
+    statistics = session.query(EventLogs.message_code).all()
+    logger.info(statistics)
+    # last_updated_pst = statistics.date_time.astimezone(pst)
+ 
+    stat_dict = {
+        "0001": 0,
+        "0002": 0,
+        "0003": 0,
+        "0004": 0
+    }
+
+    for code_tuple in statistics:
+        code = code_tuple[0]  # Extracting the message code from the tuple
+        if code == "0001":
+            stat_dict["0001"] += 1
+        elif code == "0002": 
+            stat_dict["0002"] += 1
+        elif code == "0003": 
+            stat_dict["0003"] += 1
+        elif code == "0004": 
+            stat_dict["0004"] += 1
+
+
+    session.close()
+    logger.info("Request has completed")
+    return stat_dict, 200
+
+
+
+
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml",
             strict_validation=True,
             validate_responses=True)
 
-
+CORS(app.app)
+app.app.config["CORS_HEADERS"] = "Content-Type"
 
 if __name__ == "__main__":  
 # run our standalone gevent server
     t1 = Thread(target=process_messages)
     
-    t1.daemon = True 
+    t1.setDaemon = True 
 
     t1.start()
 
-    app.run(port=8120, host="0.0.0.0")
+    app.run(host="0.0.0.0",port=8120)
 
