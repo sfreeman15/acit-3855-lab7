@@ -22,6 +22,7 @@ import sqlite3
 import os.path
 import time
 from threading import Thread
+from sqlalchemy import func
 
 
 import logging
