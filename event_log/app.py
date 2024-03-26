@@ -72,7 +72,7 @@ def process_messages():
             hostname = "%s:%d" % (app_config["event_log"]["hostname"], app_config["event_log"]["port"])
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-            consumer = topic.get_simple_consumer(consumer_group=b'event_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
+            consumer = topic.get_simple_consumer(consumer_group=b'event__log_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
             logger.info("Connected to Kafka!")
             break  # Exit the loop if connection successful
         except:
