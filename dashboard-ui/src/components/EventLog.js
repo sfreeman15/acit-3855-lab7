@@ -31,14 +31,13 @@ export default function AppEvents() {
     } else if (isLoaded === true){
         return(
             <div>
-                <h1>Event Log</h1>
                 <table className={"EventTable"}>
 					<tbody>
 						<tr>
-							<td># Event 0001: {stats['0001']}</td>
-							<td># Event 0002 {stats['0002']}</td>
-                            <td># Event 0002 {stats['0003']}</td>
-                            <td># Event 0004 {stats['0004']}</td>
+							<td># Event 0001: {stats["0001"]}</td>
+							<td># Event 0002 {stats[ "0002"]}</td>
+                            <td># Event 0002 {stats[ "0003"]}</td>
+                            <td># Event 0004 {stats[ "0004"]}</td>
 						</tr>
 					</tbody>
                 </table>
