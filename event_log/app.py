@@ -87,6 +87,8 @@ def process_messages():
     logger.info("adding to database:")
 
 
+    pst = timezone('America/Vancouver')
+
 
 
     for msg in consumer:
@@ -108,7 +110,7 @@ def process_messages():
             session = DB_SESSION()
 
             date_time = datetime.datetime.now()        
-
+            date_time =  date_time.astimezone(pst)
             event_log = EventLogs(message=message, message_code=msg_code, date_time=date_time)
         
             session.add(event_log)
