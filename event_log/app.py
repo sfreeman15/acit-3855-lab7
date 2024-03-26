@@ -87,14 +87,7 @@ def process_messages():
     logger.info("adding to database:")
 
 
-    for msg in consumer:
-        try:
-            msg_str = msg.value.decode('utf-8')
-            logger.debug(f"Raw message: {msg_str}")  # Log the raw message
-            msg = json.loads(msg_str)
-            logger.info(msg)
-            msg_info = msg["message"]
-            msg_code = msg["message_code"]
+
 
     for msg in consumer:
         try:
