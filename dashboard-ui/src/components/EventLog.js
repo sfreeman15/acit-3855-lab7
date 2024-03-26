@@ -31,26 +31,17 @@ export default function AppEvents() {
     } else if (isLoaded === true){
         return(
             <div>
-                <h1>Latest Stats</h1>
-                <table className={"StatsTable"}>
+                <h1>Event Log</h1>
+                <table className={"EventTable"}>
 					<tbody>
 						<tr>
-							<th>Ticket Purchase</th>
-							<th>Ticket Upload</th>
-						</tr>
-						<tr>
-							<td># Ticket Purchase: {stats['num_tp_readings']}</td>
-							<td># Ticket Upload: {stats['num_tu_readings']}</td>
-						</tr>
-						<tr>
-							<td colspan="2">Max Amount of Ticket Purchase Requests: {stats['max_tp_readings']}</td>
-						</tr>
-						<tr>
-							<td colspan="2">Max Amount of Ticket Upload {stats['max_tu_readings']}</td>
+							<td># Event 0001: {stats['0001']}</td>
+							<td># Event 0002 {stats['0002']}</td>
+                            <td># Event 0002 {stats['0003']}</td>
+                            <td># Event 0004 {stats['0004']}</td>
 						</tr>
 					</tbody>
                 </table>
-                <h3>Last Updated: {stats['last_updated']}</h3>
 
             </div>
         )
