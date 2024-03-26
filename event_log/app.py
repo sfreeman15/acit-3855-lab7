@@ -86,22 +86,25 @@ def process_messages():
         return
     logger.info("adding to database:")
 
-
     for msg in consumer:
-        logger.info(msg)
-        msg_str = msg.value.decode('utf-8')
-        logger.info(msg_str)
         try:
-
             msg_str = msg.value.decode('utf-8')
-            msg = json.loads(msg_str)
-            logger.info("Message: %s" % msg)
-            msg_info = msg["message"]
-            msg_code = msg["message_code"]
-
+            logger.debug(f"Raw message: {msg_str}")  # Log the raw message
+            
+            # Split the message to separate the message code
+            parts = msg_str.split(':', 1)
+            if len(parts) != 2:
+                logger.error("Invalid message format")
+                continue  # Skip processing this message
+            
+            msg_code, json_part = parts
+            
+            # Parse the JSON part into a dictionary
+            msg_dict = json.loads(json_part.strip())
+            
             # Extract message information
-            msg_info = msg.get("message")
-            msg_code = msg.get("message_code")
+            msg_info = msg_dict.get("message")
+            msg_code = msg_dict.get("message_code")
 
             session = DB_SESSION()
 
