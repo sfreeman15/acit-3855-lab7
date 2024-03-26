@@ -50,10 +50,11 @@ while current_retry_count < app_config["retries"]['retry_count']:
 
         client = KafkaClient(hosts=hostname)
         topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-        producer = topic.get_sync_producer()
-        msg = { "message_code": "0001", "message": "Ready to receive messages on RESTful API"}
+        producer2 = topic.get_sync_producer()
+        msg = { "message_code": "0001", 
+               "message": "Ready to receive messages on RESTful API"}
         msg_str = json.dumps(msg)
-        producer.produce(msg_str.encode('utf-8'))
+        producer2.produce(msg_str.encode('utf-8'))
         logger.info(msg_str)
         
         break #yahoo 
@@ -104,7 +105,7 @@ def upload_ticket(body):
             "datetime" : datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
             "payload": body }
     msg_str = json.dumps(msg)
-   
+    
     producer.produce(msg_str.encode('utf-8'))
     logger.info("Returned event upload response (Id: %s) with status %s",body["trace_id"], 201)
     return NoContent, 201 
