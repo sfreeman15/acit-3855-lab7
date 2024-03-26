@@ -137,8 +137,17 @@ def event_stats():
         statistics = session.query(EventLogs.message_code, func.count()).group_by(EventLogs.message_code).all()
         logger.info(statistics)
 
-        # Create a dictionary to store counts of each message code
-        stat_dict = {code: count for code, count in statistics}
+        stat_dict = {
+                "0001": 0,
+                "0002": 0,
+                "0003": 0,
+                "0004": 0
+            }
+
+        # Iterate over statistics and update stat_dict
+        for code, count in statistics:
+            stat_dict[code] = count
+
 
         session.close()
         logger.info("Request has completed")
