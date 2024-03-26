@@ -107,7 +107,7 @@ def process_messages():
             code = message["message_code"]
             
             # Log the message
-            logger.info(f"Message: {message.strip()}")  # Log the message
+            # logger.info(f"Message: {message.strip()}")  # Log the message
 
             session = DB_SESSION()
 
