@@ -63,8 +63,8 @@ def load(producer_two, count):
             if producer_two is None:
                 logger.error("Producer does not exist")
             else:
-                msg = {"message": "Ready to process messages on RESTful API",
-                        "message_code": "0003"}
+                msg = { "message_code": "0003","message": "Ready to process messages on RESTful API"
+                       }
             msg_str = json.dumps(msg)
             count += 1
             return  producer_two.produce(msg_str.encode('utf-8'))
