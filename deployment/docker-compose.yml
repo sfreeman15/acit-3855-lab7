@@ -61,7 +61,8 @@ services:
     image: storage:latest
     ports:
       - "8090:8090"
-    volumes: /home/azureuser/config/storage:/config
+    volumes: 
+      - /home/azureuser/config/storage:/config  # Make sure the indentation is correct here
     depends_on:
       - "kafka"
       - "db"
