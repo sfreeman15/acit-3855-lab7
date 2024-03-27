@@ -38,35 +38,35 @@ current_retry_count = 0
 count = 0
 
 
-def producer2(current_retry_count, count):
-    while current_retry_count < app_config["retries"]['retry_count']:
-        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-        try:
+while current_retry_count < app_config["retries"]['retry_count']:
+    logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+    try:
 
-            logger.info("Connected!")
+        logger.info("Connected!")
 
-            if count >= 1: 
-                 break
-            
-            hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
-            client = KafkaClient(hosts=hostname)
-            topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-            producer2 = topic.get_sync_producer()
-            msg = { "message_code": "0003", 
-                    "message": "Ready to process messages on RESTful API"}
-            msg_str = json.dumps(msg)
-            logger.info(msg_str)
-
-            producer2.produce(msg_str.encode('utf-8'))
-            count += 1
-            break
-        except Exception as e:
+        hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
+        client = KafkaClient(hosts=hostname)
+        topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+        producer2 = topic.get_sync_producer()
+    except Exception as e:
             logger.error(f"Connection failed: {e}")
             time.sleep(sleepy_time)
             current_retry_count += 1
+
+
            
 
-
+def load(producer_two):
+    if producer_two is None:
+         logger.error("Producer does not exist")
+    else:
+         msg = {"message": "Ready to process messages on RESTful API",
+                "message_code": "0003"}
+    msg_str = json.dumps(msg)
+    producer_two.produce(msg_str.encode('utf-8'))
+        
+            
+        
 
 
 def populate_stats():
@@ -224,7 +224,7 @@ def get_stats():
     return pydict, 200
     
 
-    
+
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
@@ -239,6 +239,6 @@ app.app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":  
 # run our standalone gevent server
-    producer2(current_retry_count=current_retry_count,count=count)
+    load(producer_two=producer2)
     init_scheduler()
     app.run(port=8100, host="0.0.0.0")
