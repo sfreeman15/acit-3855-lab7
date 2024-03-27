@@ -213,9 +213,16 @@ def populate_stats():
 
     if most_recent_statistic:
         for purchase_item in purchase_data:
-            logger.debug(f'Purchase trace_id: {purchase_item.trace_id}')
+            try:
+                logger.debug(f'Purchase trace_id: {purchase_item["trace_id"]}')
+            except TypeError as e:
+                logger.error(f"Error accessing trace_id in purchase_data: {str(e)}")
         for upload_item in upload_data:
-            logger.debug(f'Upload trace_id: {upload_item["trace_id"]}')
+            try:
+                logger.debug(f'Upload trace_id: {upload_item["trace_id"]}')
+            except TypeError as e:
+                logger.error(f"Error accessing trace_id in upload_data: {str(e)}")
+
 
             
         # logger.debug(f'Updated Statistics Values - num_tp_readings: {most_recent_statistic.num_tp_readings}, num_tu_readings: {most_recent_statistic.num_tu_readings}, max_tp_readings: {most_recent_statistic.max_tp_readings}, max_tu_readings: {most_recent_statistic.max_tu_readings}, last_updated: {most_recent_statistic.last_updated}')
