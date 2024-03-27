@@ -69,8 +69,9 @@ def producer2():
             msg = { "message_code": "0001", 
                     "message": "Ready to receive messages on RESTful API"}
             msg_str = json.dumps(msg)
-            producer2.produce(msg_str.encode('utf-8'))
             logger.info(msg_str)
+
+            return producer2.produce(msg_str.encode('utf-8'))
             break  # Break out of the loop only after successful message production
         except Exception as e:
             logger.error(f"Connection failed: {e}")
