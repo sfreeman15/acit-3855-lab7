@@ -57,25 +57,25 @@ while current_retry_count < app_config["retries"]['retry_count']:
            
         
 
-
-while current_retry_count < app_config["retries"]['retry_count']:
-    logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-    try:    
-        logger.info("Connected!")
-        hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
-        client = KafkaClient(hosts=hostname)
-        topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-        producer2 = topic.get_sync_producer()
-        msg = { "message_code": "0001", 
-                "message": "Ready to receive messages on RESTful API"}
-        msg_str = json.dumps(msg)
-        producer2.produce(msg_str.encode('utf-8'))
-        logger.info(msg_str)
-        break  # Break out of the loop only after successful message production
-    except Exception as e:
-        logger.error(f"Connection failed: {e}")
-        time.sleep(sleepy_time)
-        current_retry_count += 1
+def producer2():
+    while current_retry_count < app_config["retries"]['retry_count']:
+        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+        try:    
+            logger.info("Connected!")
+            hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
+            client = KafkaClient(hosts=hostname)
+            topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+            producer2 = topic.get_sync_producer()
+            msg = { "message_code": "0001", 
+                    "message": "Ready to receive messages on RESTful API"}
+            msg_str = json.dumps(msg)
+            producer2.produce(msg_str.encode('utf-8'))
+            logger.info(msg_str)
+            break  # Break out of the loop only after successful message production
+        except Exception as e:
+            logger.error(f"Connection failed: {e}")
+            time.sleep(sleepy_time)
+            current_retry_count += 1
            
     
 
