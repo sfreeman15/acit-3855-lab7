@@ -208,11 +208,11 @@ def populate_stats():
 
 
 
-    if most_recent_statistic:
-        for index in range(len(purchase_data)):
-                logger.debug(f'Purchase trace_id: {purchase_data[index]["trace_id"]}')
-        for index in range(len(upload_data)):
-                logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
+    # if most_recent_statistic:
+    #     for index in range(len(purchase_data)):
+    #             logger.debug(f'Purchase trace_id: {purchase_data[index]["trace_id"]}')
+    #     for index in range(len(upload_data)):
+    #             logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
             
         # logger.debug(f'Updated Statistics Values - num_tp_readings: {most_recent_statistic.num_tp_readings}, num_tu_readings: {most_recent_statistic.num_tu_readings}, max_tp_readings: {most_recent_statistic.max_tp_readings}, max_tu_readings: {most_recent_statistic.max_tu_readings}, last_updated: {most_recent_statistic.last_updated}')
 
