@@ -197,26 +197,22 @@ def populate_stats():
    #      max_value_u = len(upload_data)
    #      # Update updated_upload_val with the new maximum TU readings
     logger.info(max_value_p)
-    logger.info(max_value_p)
-    for upload_item in upload_data:
-        logger.info(upload_item)
-        logger.info(type(upload_item))
-        logger.info(upload_item)
-        if max_value_u < upload_item.get("price", 0):
-            max_value_u = upload_item.get("price", 0)
-    for purchase_item in purchase_data:
-        logger.info(purchase_item)
-        logger.info(type(purchase_item))
-        if max_value_p < purchase_item.get("price", 0):
-            max_value_p = purchase_item.get("price", 0)
+    for i in purchase_data:
+         logger.info(i["price"])
+         if max_value_p < i["price"]:
+              max_value_p = i["price"]
+    for j in upload_data:
+         logger.info(j["price"])
+         if max_value_u < j["price"]:
+              max_value_u = j["price"]
 
 
 
-    # if most_recent_statistic:
-    #     for index in range(len(purchase_data)):
-    #             logger.debug(f'Purchase trace_id: {purchase_data[index]["trace_id"]}')
-    #     for index in range(len(upload_data)):
-    #             logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
+    if most_recent_statistic:
+        for index in range(len(purchase_data)):
+                logger.debug(f'Purchase trace_id: {purchase_data[index]["trace_id"]}')
+        for index in range(len(upload_data)):
+                logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
             
         # logger.debug(f'Updated Statistics Values - num_tp_readings: {most_recent_statistic.num_tp_readings}, num_tu_readings: {most_recent_statistic.num_tu_readings}, max_tp_readings: {most_recent_statistic.max_tp_readings}, max_tu_readings: {most_recent_statistic.max_tu_readings}, last_updated: {most_recent_statistic.last_updated}')
 
