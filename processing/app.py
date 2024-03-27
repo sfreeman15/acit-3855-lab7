@@ -213,7 +213,7 @@ def populate_stats():
 
     if most_recent_statistic:
         for purchase_item in purchase_data:
-            logger.debug(f'Purchase trace_id: {purchase_item["trace_id"]}')
+            logger.debug(f'Purchase trace_id: {purchase_item.trace_id}')
         for upload_item in upload_data:
             logger.debug(f'Upload trace_id: {upload_item["trace_id"]}')
 
