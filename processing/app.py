@@ -70,6 +70,7 @@ def load(producer_two, count):
                 count += 1
                 producer_two.produce(msg_str.encode('utf-8'))
                 logger.info("Produced initial message")
+                return count
     except Exception as e:
         logger.error(f"Error in load function: {e}")
 
