@@ -134,7 +134,7 @@ def populate_stats():
     upload_request = requests.get(f'{app_config["eventstore"]["url"]}/sales/upload?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
-
+    logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
     events = len(purchase_data) + len(upload_data)
 
     if events >= 4:
@@ -186,7 +186,7 @@ def populate_stats():
     # logger.info(f"{purchase_data.status_code}")
     
 
-    logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
+
     stats = Stats(num_tp_readings=most_recent_statistic.num_tp_readings + len(purchase_data), num_tu_readings=most_recent_statistic.num_tu_readings + len(upload_data), max_tp_readings=max_value_p, max_tu_readings=max_value_u, last_updated=last_hour_datetime)
     
     
