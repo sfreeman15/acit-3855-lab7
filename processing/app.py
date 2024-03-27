@@ -234,10 +234,11 @@ app.add_api("openapi.yaml",
 CORS(app.app)
 app.app.config['CORS_HEADERS'] = 'Content-Type'
 
-load(producer_two=producer2, count=count)
+
 
 
 if __name__ == "__main__":  
 # run our standalone gevent server
+    load(producer_two=producer2, count=count)
     init_scheduler()
     app.run(port=8100, host="0.0.0.0")
