@@ -31,7 +31,7 @@ with open('log_conf.yml', 'r') as f:
 
 
 logger = logging.getLogger('basicLogger')
-
+sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
 DB_ENGINE = create_engine(
     f'mysql+pymysql://{app_config["datastore"]["user"]}:{app_config["datastore"]["password"]}'
     f'@{app_config["datastore"]["hostname"]}:{app_config["datastore"]["port"]}'
