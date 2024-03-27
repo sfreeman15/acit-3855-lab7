@@ -27,15 +27,10 @@ current_retry_count = 0
 
 
     
-import os
-import yaml
-import logging
-import logging.config
-
 if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
-    app_conf_file = "/config/receiver/app_conf.yml"
-    log_conf_file = "/config/receiver/log_conf.yml"
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
 else:
     print("In Dev Environment")
     app_conf_file = "app_conf.yml"
@@ -52,7 +47,6 @@ with open(log_conf_file, 'r') as f:
 logger = logging.getLogger('basicLogger')
 logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
-
 
 sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
 
