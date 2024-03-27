@@ -35,12 +35,19 @@ Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 current_retry_count = 0 
+count = 0
 
-def producer2(current_retry_count):
+
+def producer2(current_retry_count, count):
     while current_retry_count < app_config["retries"]['retry_count']:
         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-        try:    
+        try:
+
             logger.info("Connected!")
+
+            if count >= 1: 
+                 break
+            
             hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["event_log"]["topic"])]
@@ -51,6 +58,7 @@ def producer2(current_retry_count):
             logger.info(msg_str)
 
             producer2.produce(msg_str.encode('utf-8'))
+            count += 1
             break
         except Exception as e:
             logger.error(f"Connection failed: {e}")
