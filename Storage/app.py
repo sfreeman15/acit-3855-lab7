@@ -88,7 +88,8 @@ def get_uploads(start_timestamp, end_timestamp):
 
 def process_messages():
     """ Process event messages """
-
+    sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
+    max_retries = app_config["retries"]['retry_count']
     hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["events"]["port"])
 
     current_retry_count = 0 
@@ -112,8 +113,7 @@ def process_messages():
            
     logger.debug("Start of process_messages function")
     hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
-    sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
-    max_retries = app_config["retries"]['retry_count']
+
 
     current_retry_count2 = 0 
     
