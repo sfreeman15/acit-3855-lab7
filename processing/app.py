@@ -196,15 +196,19 @@ def populate_stats():
    #      # Update max_value_u with the new maximum TU readings
    #      max_value_u = len(upload_data)
    #      # Update updated_upload_val with the new maximum TU readings
-    for i in purchase_data:
-         logger.info(f'price is: {i["price"]}')
-         if max_value_p < i["price"]:
-              max_value_p = i["price"]
-    for j in upload_data:
-         logger.info(f'price is: {j["price"]}')
-         if max_value_u < j["price"]:
-              max_value_u = j["price"]
 
+    for upload_item in upload_data:
+        if isinstance(upload_item, dict):
+            logger.info(upload_item)
+            if "price" in upload_item:
+                price = upload_item["price"]
+                logger.info(f'price is: {price}')
+                if max_value_u < price:
+                    max_value_u = price
+            else:
+                logger.warning(f'upload_item does not contain "price" key: {upload_item}')
+        else:
+            logger.warning(f'upload_item is not a dictionary: {upload_item}')
 
 
     if most_recent_statistic:
