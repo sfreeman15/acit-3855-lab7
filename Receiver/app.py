@@ -71,8 +71,7 @@ def producer2():
             msg_str = json.dumps(msg)
             logger.info(msg_str)
 
-            return producer2.produce(msg_str.encode('utf-8'))
-            break  # Break out of the loop only after successful message production
+            producer2.produce(msg_str.encode('utf-8'))
         except Exception as e:
             logger.error(f"Connection failed: {e}")
             time.sleep(sleepy_time)
@@ -123,6 +122,8 @@ def upload_ticket(body):
     producer.produce(msg_str.encode('utf-8'))
     logger.info("Returned event upload response (Id: %s) with status %s",body["trace_id"], 201)
     return NoContent, 201 
+
+producer2()
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
