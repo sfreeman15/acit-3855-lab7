@@ -181,6 +181,18 @@ def populate_stats():
     
     max_value_p = most_recent_statistic.max_tp_readings
     max_value_u = most_recent_statistic.max_tu_readings
+
+
+    # Logging purchase_data
+    for i, item in enumerate(purchase_data, start=1):
+        logger.info(f'Purchase Data {i}: {item}')
+
+    # Logging upload_data
+    for i, item in enumerate(upload_data, start=1):
+        logger.info(f'Upload Data {i}: {item}')
+
+
+
     
    # # Check if the length of purchase_data exceeds the current maximum TP readings
    #  # and if the number of TP readings didn't increase
