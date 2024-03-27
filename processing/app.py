@@ -22,6 +22,14 @@ from pykafka import KafkaClient
 
 
 
+
+
+
+    
+
+
+
+
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
 
@@ -35,11 +43,7 @@ logger = logging.getLogger('basicLogger')
 DB_ENGINE = create_engine("sqlite:///stats.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
-
-
-current_retry_count = 0 
-
-
+ 
 
 def populate_stats():
     """ Periodically update stats """
@@ -60,7 +64,6 @@ def populate_stats():
     
     current_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     session = DB_SESSION()
-    
     most_recent_statistic = session.query(Stats).order_by(Stats.last_updated.desc()).first()
     #SOURCE: https://stackoverflow.com/questions/8551952/how-to-get-last-record
     
@@ -105,15 +108,23 @@ def populate_stats():
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
 
-    if len(upload_data) + len(purchase_data) > 25:
-        msg = { "message_code": "0004", "message": "Received more than 25 messages"}
-        msg_str = json.dumps(msg)
-        producer2.produce(msg_str.encode('utf-8'))
-
     
     max_value_p = most_recent_statistic.max_tp_readings
     max_value_u = most_recent_statistic.max_tu_readings
     
+   # # Check if the length of purchase_data exceeds the current maximum TP readings
+   #  # and if the number of TP readings didn't increase
+   #  if len(purchase_data) > max_value_p:
+   #      # Update max_value_p with the new maximum TP readings
+   #      max_value_p = len(purchase_data)
+   #      # Update updated_purchase_val with the new maximum TP readings
+
+   #  # Check if the length of upload_data exceeds the current maximum TU readings
+   #  # and if the number of TU readings didn't increase
+   #  if len(upload_data) > max_value_u:
+   #      # Update max_value_u with the new maximum TU readings
+   #      max_value_u = len(upload_data)
+   #      # Update updated_upload_val with the new maximum TU readings
 
     for i in purchase_data:
          if max_value_p < i["price"]:
@@ -129,9 +140,11 @@ def populate_stats():
         for index in range(len(upload_data)):
                 logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
             
+        # logger.debug(f'Updated Statistics Values - num_tp_readings: {most_recent_statistic.num_tp_readings}, num_tu_readings: {most_recent_statistic.num_tu_readings}, max_tp_readings: {most_recent_statistic.max_tp_readings}, max_tu_readings: {most_recent_statistic.max_tu_readings}, last_updated: {most_recent_statistic.last_updated}')
 
 
     logger.info("yes")
+    # logger.info(f"{purchase_data.status_code}")
     
 
     logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
@@ -157,24 +170,9 @@ def populate_stats():
     logger.info("Processing Period has ended.")
     
 
-def producer():
-    while current_retry_count < app_config["retries"]['retry_count']:
-        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-        hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
 
-        client = KafkaClient(hosts=hostname)
-        topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-        producer2 = topic.get_sync_producer()
-        producer2 = topic.get_sync_producer()
-
-
-        msg = { "message_code": "0003", "message": "Connected to processor"}
-
-        msg_str = json.dumps(msg)
-        producer2.produce(msg_str.encode('utf-8'))
 
 def init_scheduler():
-    
     sched = BackgroundScheduler(daemon=True, timezone=timezone('America/Los_Angeles'))
     sched.add_job(populate_stats,
     'interval',
@@ -219,4 +217,3 @@ if __name__ == "__main__":
 # run our standalone gevent server
     init_scheduler()
     app.run(port=8100, host="0.0.0.0")
-
