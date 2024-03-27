@@ -17,7 +17,6 @@ import json
 from flask_cors import CORS, cross_origin
 from pytz import timezone
 from pykafka import KafkaClient
-import time
 
 
 
@@ -40,28 +39,7 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 current_retry_count = 0 
 
-sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
 
-def producer2(current_retry_count):
-    while current_retry_count < app_config["retries"]['retry_count']:
-        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-        try:    
-            logger.info("Connected!")
-            hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
-            client = KafkaClient(hosts=hostname)
-            topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-            producer2 = topic.get_sync_producer()
-            msg = { "message_code": "0003", 
-                    "message": "Ready to process messages on RESTful API"}
-            msg_str = json.dumps(msg)
-            logger.info(msg_str)
-
-            producer2.produce(msg_str.encode('utf-8'))
-            break
-        except Exception as e:
-            logger.error(f"Connection failed: {e}")
-            time.sleep(sleepy_time)
-            current_retry_count += 1
 
 def populate_stats():
     """ Periodically update stats """
@@ -70,7 +48,15 @@ def populate_stats():
     logger.info("Connected!")
     hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
 
-    
+    client = KafkaClient(hosts=hostname)
+    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+    producer2 = topic.get_sync_producer()
+z
+
+    msg = { "message_code": "0003", "message": "Connected to processor"}
+
+    msg_str = json.dumps(msg)
+    producer2.produce(msg_str.encode('utf-8'))
 
     time = datetime.datetime.now()
     
@@ -155,6 +141,10 @@ def populate_stats():
     
     
     
+
+
+
+    
     if stats:
          session.add(stats)
     
@@ -168,6 +158,22 @@ def populate_stats():
     print(purchase_data)
     logger.info("Processing Period has ended.")
     
+
+def producer():
+    while current_retry_count < app_config["retries"]['retry_count']:
+        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+        hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
+
+        client = KafkaClient(hosts=hostname)
+        topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+        producer2 = topic.get_sync_producer()
+        producer2 = topic.get_sync_producer()
+
+
+        msg = { "message_code": "0003", "message": "Connected to processor"}
+
+        msg_str = json.dumps(msg)
+        producer2.produce(msg_str.encode('utf-8'))
 
 def init_scheduler():
     
@@ -213,7 +219,6 @@ app.app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":  
 # run our standalone gevent server
-    producer2(current_retry_count=current_retry_count)
     init_scheduler()
     app.run(port=8100, host="0.0.0.0")
 
