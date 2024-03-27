@@ -48,6 +48,7 @@ while current_retry_count < app_config["retries"]['retry_count']:
         client = KafkaClient(hosts=hostname)
         topic = client.topics[str.encode(app_config["event_log"]["topic"])]
         producer2 = topic.get_sync_producer()
+        break
     except Exception as e:
             logger.error(f"Connection failed: {e}")
             time.sleep(sleepy_time)
