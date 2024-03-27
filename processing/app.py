@@ -216,12 +216,12 @@ def populate_stats():
             try:
                 logger.debug(f'Purchase trace_id: {purchase_item["trace_id"]}')
             except TypeError as e:
-                logger.error(f"Error accessing trace_id in purchase_data: {str(e)}")
+                logger.error(f"{purchase_item}Error accessing trace_id in purchase_data: {str(e)}")
         for upload_item in upload_data:
             try:
                 logger.debug(f'Upload trace_id: {upload_item["trace_id"]}')
             except TypeError as e:
-                logger.error(f"Error accessing trace_id in upload_data: {str(e)}")
+                logger.error(f{upload_item}"Error accessing trace_id in upload_data: {str(e)}")
 
 
             
