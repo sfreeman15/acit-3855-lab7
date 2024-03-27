@@ -182,7 +182,8 @@ def populate_stats():
     max_value_p = most_recent_statistic.max_tp_readings
     max_value_u = most_recent_statistic.max_tu_readings
 
-
+    logger.info(purchase_data)
+    logger.info(upload_data)
     # Logging purchase_data
     for i, item in enumerate(purchase_data, start=1):
         logger.info(f'Purchase Data {i}: {item}')
