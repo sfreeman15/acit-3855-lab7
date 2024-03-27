@@ -57,6 +57,7 @@ while current_retry_count < app_config["retries"]['retry_count']:
 
            
 
+# Load function to be called once
 def load(producer_two, count):
     try: 
         if count < 1: 
@@ -65,16 +66,14 @@ def load(producer_two, count):
             else:
                 msg = { "message_code": "0003","message": "Ready to process messages on RESTful API"
                        }
-            msg_str = json.dumps(msg)
-            count += 1
-            return  producer_two.produce(msg_str.encode('utf-8'))
-            
+                msg_str = json.dumps(msg)
+                count += 1
+                producer_two.produce(msg_str.encode('utf-8'))
+                logger.info("Produced initial message")
     except Exception as e:
-            return logger.error(f"Connection failed: {e}")
+        logger.error(f"Error in load function: {e}")
 
-         
-    return logger.info("procuced message")
-        
+
             
  
 def populate_stats():
@@ -238,6 +237,6 @@ app.app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":  
 # run our standalone gevent server
-    load(producer_two=producer2, count = count)
+    load(producer_two=producer2, count=count)
     init_scheduler()
     app.run(port=8100, host="0.0.0.0")
