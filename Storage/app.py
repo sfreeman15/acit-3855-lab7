@@ -49,6 +49,9 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 MAX_EVENTS= 5
 EVENT_FILE = "events.json"
 
+current_retry_count = 0
+current_retry_count2 = 0
+
 
 def get_purchases(start_timestamp, end_timestamp):
     """ Gets new ticket purchases between the start and end timestamps """
@@ -121,16 +124,16 @@ def process_messages():
     # This is blocking - it will wait for a new message
     current_retry_count = 0 
     
-    while current_retry_count < app_config["retries"]['retry_count']:
+    while current_retry_count2 < app_config["retries"]['retry_count']:
         try:
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["events"]["topic"])]
         except:
             logger.error("Connection failed")
             time.sleep(sleepy_time)
-            logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-            currnet_retry_count += 1
-            if current_retry_count == max_retries:
+            logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count2}")
+            currnet_retry_count2 += 1
+            if current_retry_count2 == max_retries:
                     logger.error("Failed to connect to Kafka after %d retries. Exiting.", max_retries)
                     return
         
