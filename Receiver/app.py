@@ -39,23 +39,22 @@ with open('log_conf.yml', 'r') as f:
 logger = logging.getLogger('basicLogger')
 
 sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
-max_retries = app_config["retries"]['retry_count']
 
 
-def producer():
-    while current_retry_count < app_config["retries"]['retry_count']:
-        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-        try:    
-            client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
-            topic = client.topics[str.encode(app_config["events"]["topic"])]
-            producer = topic.get_sync_producer()
+# def producer():
+#     while current_retry_count < app_config["retries"]['retry_count']:
+#         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+#         try:    
+#             client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
+#             topic = client.topics[str.encode(app_config["events"]["topic"])]
+#             producer = topic.get_sync_producer()
 
-            logger.info("Connected!")
-            break #yahoo 
-        except:
-            logger.error("Connection failed")
-            time.sleep(sleepy_time)
-            current_retry_count += 1
+#             logger.info("Connected!")
+#             break #yahoo 
+#         except:
+#             logger.error("Connection failed")
+#             time.sleep(sleepy_time)
+#             current_retry_count += 1
 
 def producer2():
     while current_retry_count < app_config["retries"]['retry_count']:
@@ -110,7 +109,6 @@ def upload_ticket(body):
     print(body)
     logger.info("Received event upload request with a trace ID of %s %s", body["trace_id"], body )
     headers =  { "content-type": "application/json" }
-    # response = requests.post(app_config["eventstore1"]["url"], json=body, headers=headers)
 
     client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
     topic = client.topics[str.encode(app_config["events"]["topic"])]
