@@ -200,10 +200,13 @@ def populate_stats():
     logger.info(max_value_p)
     for upload_item in upload_data:
         logger.info(upload_item)
+        logger.info(type(upload_item))
+        logger.info(upload_item)
         if max_value_u < upload_item.get("price", 0):
             max_value_u = upload_item.get("price", 0)
     for purchase_item in purchase_data:
-        logger.info(upload_item)
+        logger.info(purchase_item)
+        logger.info(type(purchase_item))
         if max_value_p < purchase_item.get("price", 0):
             max_value_p = purchase_item.get("price", 0)
 
