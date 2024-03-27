@@ -98,11 +98,7 @@ def process_messages():
             msg_str = msg.value.decode('utf-8')
             logger.debug(f"Raw message: {msg_str}")  # Log the raw message
             message = json.loads(msg_str)
-            # # Split the message to separate the message code
-            # parts = msg_str.split(':', 1)
-            # if len(parts) != 2:
-            #     logger.error("Invalid message format")
-            #     continue  # Skip processing this message
+
             
             og_message = message["message"]
             code =message["message_code"]

@@ -63,20 +63,17 @@ def producer2():
         try:    
             logger.info("Connected!")
             hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
-            # client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
-
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config["event_log"]["topic"])]
             producer2 = topic.get_sync_producer()
             msg = { "message_code": "0001", 
-                "message": "Ready to receive messages on RESTful API"}
+                    "message": "Ready to receive messages on RESTful API"}
             msg_str = json.dumps(msg)
             producer2.produce(msg_str.encode('utf-8'))
             logger.info(msg_str)
-            
-            break #yahoo 
-        except:
-            logger.error("Connection failed")
+            break  # Break out of the loop only after successful message production
+        except Exception as e:
+            logger.error(f"Connection failed: {e}")
             time.sleep(sleepy_time)
             current_retry_count += 1
            
