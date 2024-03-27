@@ -32,6 +32,8 @@ with open('log_conf.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
+max_retries = app_config["retries"]['retry_count']
+
 DB_ENGINE = create_engine(
     f'mysql+pymysql://{app_config["datastore"]["user"]}:{app_config["datastore"]["password"]}'
     f'@{app_config["datastore"]["hostname"]}:{app_config["datastore"]["port"]}'
@@ -114,8 +116,6 @@ def process_messages():
 
     logger.debug("Start of process_messages function")
     hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
-    sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
-    max_retries = app_config["retries"]['retry_count']
 
     
     # Create a consume on a consumer group, that only reads new messages
