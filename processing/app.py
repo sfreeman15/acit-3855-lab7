@@ -57,14 +57,17 @@ while current_retry_count < app_config["retries"]['retry_count']:
 
            
 
-def load(producer_two):
-    if producer_two is None:
-         logger.error("Producer does not exist")
-    else:
-         msg = {"message": "Ready to process messages on RESTful API",
-                "message_code": "0003"}
-    msg_str = json.dumps(msg)
-    producer_two.produce(msg_str.encode('utf-8'))
+def load(producer_two, count):
+    if count < 1: 
+        if producer_two is None:
+            logger.error("Producer does not exist")
+        else:
+            msg = {"message": "Ready to process messages on RESTful API",
+                    "message_code": "0003"}
+        msg_str = json.dumps(msg)
+        producer_two.produce(msg_str.encode('utf-8'))
+        count += 1
+    return logger.info("procuced message")
         
             
         
