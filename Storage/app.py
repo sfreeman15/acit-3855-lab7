@@ -18,16 +18,30 @@ from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread
 import time
+import os
 
 
 
+if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
 
-with open('app_conf.yml', 'r') as f:
+with open(app_conf_file, 'r') as f:
     app_config = yaml.safe_load(f.read())
 
-with open('log_conf.yml', 'r') as f:
+# External Logging Configuration
+with open(log_conf_file, 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
+
+logger = logging.getLogger('basicLogger')
+logger.info("App Conf File: %s" % app_conf_file)
+logger.info("Log Conf File: %s" % log_conf_file)
 
 
 logger = logging.getLogger('basicLogger')
@@ -88,9 +102,17 @@ def get_uploads(start_timestamp, end_timestamp):
 
 def process_messages():
     """ Process event messages """
+    logger.debug("Start of process_messages function")
+    hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
     sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
     max_retries = app_config["retries"]['retry_count']
-    hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["events"]["port"])
+
+    
+    # Create a consume on a consumer group, that only reads new messages
+    # (uncommitted messages) when the service re-starts (i.e., it doesn't
+    # read all the old messages from the history in the message queue).
+    # This is blocking - it will wait for a new message
+    current_retry_count = 0 
 
     current_retry_count = 0 
     while current_retry_count < app_config["retries"]['retry_count']:

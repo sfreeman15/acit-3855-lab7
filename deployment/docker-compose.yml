@@ -46,29 +46,44 @@ services:
     volumes:
       - my-db:/var/lib/mysql
   receiver:
+    environment:
+      - TARGET_ENV=test
     image: receiver:latest
     ports:
       - "8080:8080"
+    volumes:
+      - /home/azureuser/config/receiver:/config
     depends_on:
     - "kafka"
   storage:
+    environment:
+      - TARGET_ENV=test
     image: storage:latest
     ports:
       - "8090:8090"
+    volumes: /home/azureuser/config/storage:/config
     depends_on:
       - "kafka"
       - "db"
   processing:
+    environment:
+      - TARGET_ENV=test
     image: processing:latest
     ports:
       - "8100:8100"
+    volumes:
+      - /home/azureuser/config/processing:/config
     depends_on:
       - "storage"
     network_mode: "host"
   audit_log:
+    environment:
+      - TARGET_ENV=test
     image: audit_log:latest
     ports:
       - "8110:8110"
+    volumes:
+      - /home/azureuser/config/audit_log:/config
     depends_on:
       - "kafka"
       - "db"
