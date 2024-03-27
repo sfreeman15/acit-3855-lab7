@@ -41,20 +41,21 @@ logger = logging.getLogger('basicLogger')
 sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
 
 
-# def producer():
-#     while current_retry_count < app_config["retries"]['retry_count']:
-#         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-#         try:    
-#             client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
-#             topic = client.topics[str.encode(app_config["events"]["topic"])]
-#             producer = topic.get_sync_producer()
+while current_retry_count < app_config["retries"]['retry_count']:
+    logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+    try:    
+        client = KafkaClient(hosts='acit-3855-kafka.westus3.cloudapp.azure.com:9092')
+        topic = client.topics[str.encode(app_config["events"]["topic"])]
+        producer = topic.get_sync_producer()
 
-#             logger.info("Connected!")
-#             break #yahoo 
-#         except:
-#             logger.error("Connection failed")
-#             time.sleep(sleepy_time)
-#             current_retry_count += 1
+        logger.info("Connected!")
+        break #yahoo 
+    except:
+        logger.error("Connection failed")
+        time.sleep(sleepy_time)
+        current_retry_count += 1
+           
+        
 
 def producer2():
     while current_retry_count < app_config["retries"]['retry_count']:
