@@ -49,7 +49,7 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 MAX_EVENTS= 5
 EVENT_FILE = "events.json"
 
-current_retry_count = 0
+
 current_retry_count2 = 0
 
 
@@ -91,7 +91,8 @@ def get_uploads(start_timestamp, end_timestamp):
 
 def process_messages():
     """ Process event messages """
-
+    # Declare current_retry_count here
+    current_retry_count = 0
     
     while current_retry_count < app_config["retries"]['retry_count']:
         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
@@ -110,7 +111,6 @@ def process_messages():
             logger.error("Connection failed")
             time.sleep(sleepy_time)
             current_retry_count += 1
-           
 
     logger.debug("Start of process_messages function")
     hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
