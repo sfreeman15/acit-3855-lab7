@@ -239,6 +239,6 @@ app.app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":  
 # run our standalone gevent server
-    producer2(current_retry_count=current_retry_count)
+    producer2(current_retry_count=current_retry_count,count=count)
     init_scheduler()
     app.run(port=8100, host="0.0.0.0")
