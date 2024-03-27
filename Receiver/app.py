@@ -72,6 +72,7 @@ def producer2(current_retry_count):
             logger.info(msg_str)
 
             producer2.produce(msg_str.encode('utf-8'))
+            break
         except Exception as e:
             logger.error(f"Connection failed: {e}")
             time.sleep(sleepy_time)
