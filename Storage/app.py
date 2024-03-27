@@ -24,8 +24,8 @@ import os
 
 if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
-    app_conf_file = "/config/app_conf.yml"
-    log_conf_file = "/config/log_conf.yml"
+    app_conf_file = "/config/storage/app_conf.yml"
+    log_conf_file = "/config/storage/log_conf.yml"
 else:
     print("In Dev Environment")
     app_conf_file = "app_conf.yml"
@@ -42,9 +42,6 @@ with open(log_conf_file, 'r') as f:
 logger = logging.getLogger('basicLogger')
 logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
-
-
-logger = logging.getLogger('basicLogger')
 
 DB_ENGINE = create_engine(
     f'mysql+pymysql://{app_config["datastore"]["user"]}:{app_config["datastore"]["password"]}'
