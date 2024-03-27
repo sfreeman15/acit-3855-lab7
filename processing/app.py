@@ -51,8 +51,6 @@ def populate_stats():
     client = KafkaClient(hosts=hostname)
     topic = client.topics[str.encode(app_config["event_log"]["topic"])]
     producer2 = topic.get_sync_producer()
-z
-
     msg = { "message_code": "0003", "message": "Connected to processor"}
 
     msg_str = json.dumps(msg)
