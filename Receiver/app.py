@@ -124,7 +124,7 @@ def upload_ticket(body):
     logger.info("Returned event upload response (Id: %s) with status %s",body["trace_id"], 201)
     return NoContent, 201 
 
-producer2(current_retry_count=current_retry_count)
+
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
@@ -134,4 +134,5 @@ app.add_api("openapi.yaml",
      
 
 if __name__ == "__main__":
+    producer2(current_retry_count=current_retry_count)
     app.run(port=8080, host="0.0.0.0")
