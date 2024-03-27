@@ -4,8 +4,7 @@ from sqlalchemy import and_
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from base import Base
-from ticket_purchase import TicketPurchase
-from ticket_upload  import TicketUpload
+from stats import Stats
 import datetime
 import requests
 import yaml
@@ -13,11 +12,103 @@ from threading import Lock
 import logging
 import logging.config
 import uuid
-import json 
+from apscheduler.schedulers.background import BackgroundScheduler
+import json
+from flask_cors import CORS, cross_origin
+from pytz import timezone
 from pykafka import KafkaClient
-from pykafka.common import OffsetType
-from threading import Thread
 import time
+
+with open('app_conf.yml', 'r') as f:
+    app_config = yaml.safe_load(f.read())
+
+with open('log_conf.yml', 'r') as f:
+    log_config = yaml.safe_load(f.read())
+    logging.config.dictConfig(log_config)
+
+sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
+
+logger = logging.getLogger('basicLogger')
+
+DB_ENGINE = create_engine("sqlite:///stats.sqlite")
+Base.metadata.bind = DB_ENGINE
+DB_SESSION = sessionmaker(bind=DB_ENGINE)
+
+current_retry_count = 0 
+count = 0
+
+
+while current_retry_count < app_config["retries"]['retry_count']:
+    logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
+    try:
+
+        logger.info("Connected!")
+
+        hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
+        client = KafkaClient(hosts=hostname)
+        topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+        producer2 = topic.get_sync_producer()
+        break
+    except Exception as e:
+            logger.error(f"Connection failed: {e}")
+            time.sleep(sleepy_time)
+            current_retry_count += 1
+
+
+           
+
+def load(producer_two, count):
+    try: 
+        if count < 1: 
+            if producer_two is None:
+                logger.error("Producer does not exist")
+            else:
+                msg = { "message_code": "0003","message": "Ready to process messages on RESTful API"
+                       }
+            msg_str = json.dumps(msg)
+            count += 1
+            return  producer_two.produce(msg_str.encode('utf-8'))
+            
+    except Exception as e:
+            return logger.error(f"Connection failed: {e}")
+
+         
+    return logger.info("procuced message")
+        
+            
+        
+
+
+def populate_stats():
+    """ Periodically update stats """
+    logger.info("Started Periodic Processing")
+
+    time = datetime.datetime.now()
+    
+    current_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    session = DB_SESSION()
+    most_recent_statistic = session.query(Stats).order_by(Stats.last_updated.desc()).first()
+    #SOURCE: https://stackoverflow.com/questions/8551952/how-to-get-last-record
+    
+    
+import connexion
+from connexion import NoContent
+from sqlalchemy import and_
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from base import Base
+from stats import Stats
+import datetime
+import requests
+import yaml
+from threading import Lock
+import logging
+import logging.config
+import uuid
+from apscheduler.schedulers.background import BackgroundScheduler
+import json
+from flask_cors import CORS, cross_origin
+from pytz import timezone
 
 
 
@@ -32,141 +123,156 @@ with open('log_conf.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
-DB_ENGINE = create_engine(
-    f'mysql+pymysql://{app_config["datastore"]["user"]}:{app_config["datastore"]["password"]}'
-    f'@{app_config["datastore"]["hostname"]}:{app_config["datastore"]["port"]}'
-    f'/{app_config["datastore"]["db"]}',
-    pool_size=5,  # Adjust the pool size as needed
-    pool_recycle=600,
-    pool_pre_ping=True
-)
-logger.info(f'Connecting to DB.Hostname:"{app_config["datastore"]["hostname"]}. Port: {app_config["datastore"]["port"]}')
-
-
+DB_ENGINE = create_engine("sqlite:///stats.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
+ 
+def populate_stats():
+    """ Periodically update stats """
+    logger.info("Started Periodic Processing")
 
-MAX_EVENTS= 5
-EVENT_FILE = "events.json"
+    logger.info("Connected!")
+    hostname = "%s:%d" % (app_config["event_log"]["hostname"],app_config["event_log"]["port"])
+
+    client = KafkaClient(hosts=hostname)
+    topic = client.topics[str.encode(app_config["event_log"]["topic"])]
+    producer2 = topic.get_sync_producer()
+    producer2 = topic.get_sync_producer()
 
 
-def get_purchases(start_timestamp, end_timestamp):
-    """ Gets new ticket purchases between the start and end timestamps """
+    msg = { "message_code": "0003", "message": "Connected to processor"}
+
+    msg_str = json.dumps(msg)
+    producer2.produce(msg_str.encode('utf-8'))
+
+    time = datetime.datetime.now()
+    
+    current_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
     session = DB_SESSION()
     
+    most_recent_statistic = session.query(Stats).order_by(Stats.last_updated.desc()).first()
+    #SOURCE: https://stackoverflow.com/questions/8551952/how-to-get-last-record
     
-    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
-    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
+    
+    default_values = {
+            'num_tp_readings': 0,
+            'num_tu_readings': 0,
+            'max_tp_readings': 0,
+            'max_tu_readings': 0,
+            'last_updated': datetime.datetime.now()}    
+  
+    
+    if most_recent_statistic is None:
+        print("nothing")
+        most_recent_statistic = Stats(
+             num_tp_readings = 0,
+             max_tp_readings = 0,
+             num_tu_readings = 0,
+             max_tu_readings = 0,
+             last_updated= time
+
+        )
+        session.add(most_recent_statistic)
+        print("added")
+        session.commit()
+       
+        logger.info(f"Number of purchase events received: {default_values['num_tp_readings']}. Number of upload events received: {default_values['num_tu_readings']}")
+        # stats = Stats(default_values['num_tp_readings'], default_values['num_tu_readings'], default_values["max_tp_readings"], default_values["max_tu_readings"], default_values["last_updated"])
+        logger.debug(f'Updated Statistics Values - num_tp_readings:{default_values["num_tp_readings"]}, num_tu_readings: {default_values["num_tu_readings"]}max_tp_readings: {default_values["max_tp_readings"]}, max_tu_readings: {default_values["max_tu_readings"]}, last_updated: {default_values["last_updated"]}')
+        
+
+  
+    last_hour_datetime = datetime.datetime.now()
+    end_timestamp = last_hour_datetime.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    
 
    
-    results = session.query(TicketPurchase).filter( and_(TicketPurchase.date_created >= start_timestamp_datetime, TicketPurchase.date_created < end_timestamp_datetime))
-    results_list = []
-
-    for ticket in results:
-        results_list.append(ticket.to_dict())
     
-    session.close()
-    logger.info("Query for ticket purchases after %s returns %d results" % (start_timestamp, len(results_list)))
-    return results_list, 200
+    database_time = most_recent_statistic.last_updated.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
+    purchase_requests = requests.get(f'{app_config["eventstore"]["url"]}/sales/purchase?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
+    upload_request = requests.get(f'{app_config["eventstore"]["url"]}/sales/upload?start_timestamp={database_time}&end_timestamp={end_timestamp}') #needs to include start_timestamp and end_timestamp
+    purchase_data = purchase_requests.json()
+    upload_data = upload_request.json()
 
-
-
-
-def get_uploads(start_timestamp, end_timestamp):
-    """ Gets new blood pressure readings between the start and end timestamps """
-    session = DB_SESSION()  
-    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
-    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, "%Y-%m-%dT%H:%M:%S.%fZ")
-    results = session.query(TicketUpload).filter(and_(TicketUpload.date_created >= start_timestamp_datetime,TicketUpload.date_created < end_timestamp_datetime))
-    results_list = []
-    for reading in results:
-        results_list.append(reading.to_dict())
-    session.close()
-    logger.info("Query for ticket upload readings after %s returns %d results" %(start_timestamp, len(results_list)))
-    return results_list, 200
-
-
-def process_messages():
-    """ Process event messages """
-    logger.debug("Start of process_messages function")
-    hostname = "%s:%d" % (app_config["events"]["hostname"],app_config["events"]["port"])
-    sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
-    max_retries = app_config["retries"]['retry_count']
+    if len(upload_data) + len(purchase_data) > 25:
+        msg = { "message_code": "0004", "message": "Received more than 25 messages"}
+        msg_str = json.dumps(msg)
+        producer2.produce(msg_str.encode('utf-8'))
 
     
-    # Create a consume on a consumer group, that only reads new messages
-    # (uncommitted messages) when the service re-starts (i.e., it doesn't
-    # read all the old messages from the history in the message queue).
-    # This is blocking - it will wait for a new message
-    current_retry_count = 0 
+    max_value_p = most_recent_statistic.max_tp_readings
+    max_value_u = most_recent_statistic.max_tu_readings
     
-    while current_retry_count < app_config["retries"]['retry_count']:
-        logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
-        try:    
-            logger.info("Connected!")
-            client = KafkaClient(hosts=hostname)
-            topic = client.topics[str.encode(app_config["event_log"]["topic"])]
-            producer2 = topic.get_sync_producer()
 
-            msg = { "message_code": "0002", "message": "Ready to comsume messages on RESTful API"}
+    for i in purchase_data:
+         if max_value_p < i["price"]:
+              max_value_p = i["price"]
+    for j in upload_data:
+         if max_value_u < j["price"]:
+              max_value_u = j["price"]
 
-            msg_str = json.dumps(msg)
-            producer2.produce(msg_str.encode('utf-8'))
-            break #yahoo 
-        except:
-            logger.error("Connection failed")
-            time.sleep(sleepy_time)
-            current_retry_count += 1
-           
-        
-    consumer = topic.get_simple_consumer(consumer_group=b'event__log_group', reset_offset_on_start=False, auto_offset_reset=OffsetType.LATEST)
 
-    for msg in consumer:
-        msg_str = msg.value.decode('utf-8')
-        msg = json.loads(msg_str)
-        logger.info("Message: %s" % msg)
-        payload = msg["payload"]
-        logger.info(f'this is the message: {msg["type"]}')
-        if msg["type"] == "purchase": # Change this to your event type
-            logger.info(f'message type is purchase: {msg["type"]}')
-            session = DB_SESSION()
-            tp =  TicketPurchase(payload['ticket_id'],
-                                payload['concert_name'],  
-                                payload["seat_number"],
-                                payload["artist"],
-                                payload['date'],
-                                payload['venue'],
-                                payload['price'],
-                                payload['trace_id'])
-            session.add(tp)
-            session.commit()
-            session.close()
-  
-            logger.debug("Stored Purchase request with a trace ID of %s", payload["trace_id"])
-            # Store the event1 (i.e., the payload) to the DB
-        elif msg["type"] == "upload": # Change this to your event type
-            logger.info(f' message type is upload: {msg["type"]}')
-            session = DB_SESSION()
-            tu = TicketUpload(payload['ticket_id'],
-                   payload['seller_name'],
-                   payload['seat_number'],
-                   payload["artist"],
-                   payload['concert_name'],
-                   payload['date'],
-                   payload["venue"],
-                   payload["price"],
-                   payload['trace_id'])
-
-    
-            session.add(tu)
-
-            session.commit()
-            session.close()
-            logger.debug("Stored Upload_ticket request with a trace ID of %s", payload["trace_id"])
+    if most_recent_statistic:
+        for index in range(len(purchase_data)):
+                logger.debug(f'Purchase trace_id: {purchase_data[index]["trace_id"]}')
+        for index in range(len(upload_data)):
+                logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
             
-        # Store the event2 (i.e., the payload) to the DB
-        # Commit the new message as being read
-        consumer.commit_offsets()
+
+
+    logger.info("yes")
+    
+
+    logger.info(f"Number of purchase events received: {len(purchase_data)}. Number of upload events received: {len(upload_data)}")
+    stats = Stats(num_tp_readings=most_recent_statistic.num_tp_readings + len(purchase_data), num_tu_readings=most_recent_statistic.num_tu_readings + len(upload_data), max_tp_readings=max_value_p, max_tu_readings=max_value_u, last_updated=last_hour_datetime)
+    
+    
+
+    
+    if stats:
+         session.add(stats)
+    
+    session.commit()
+    session.close()
+    if purchase_data != None:
+        print(f'purchase data: {purchase_data}')
+    else:
+        print("doesn't exist")
+    print(purchase_requests.status_code)
+    print(purchase_data)
+    logger.info("Processing Period has ended.")
+    
+
+
+
+def init_scheduler():
+    sched = BackgroundScheduler(daemon=True, timezone=timezone('America/Los_Angeles'))
+    sched.add_job(populate_stats,
+    'interval',
+    seconds=app_config['scheduler']['period_sec'])
+    sched.start()
+
+def get_stats():
+    logger.info("Request has started")
+    session = DB_SESSION()
+    pst = timezone('America/Vancouver')
+
+    most_recent_statistic = session.query(Stats).order_by(Stats.id.desc()).first()
+    last_updated_pst = most_recent_statistic.last_updated.astimezone(pst)
+    if most_recent_statistic is None:
+         logger.error("ERROR, NOTHING IN DATA IN TABLES")
+         return "Statistics do not exist", 404
+    # stats_dict = most_recent_statistic.json()
+    pydict = {"num_tp_readings": most_recent_statistic.num_tp_readings,
+              "num_tu_readings":most_recent_statistic.num_tu_readings,
+              "max_tp_readings": most_recent_statistic.max_tp_readings,
+              "max_tu_readings": most_recent_statistic.max_tu_readings,
+              "last_updated": last_updated_pst.strftime('%Y-%m-%d %H:%M:%S %Z%z')}
+    session.close()
+    logger.info("Request has completed")
+    return pydict, 200
+    
+
 
 
 
