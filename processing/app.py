@@ -76,56 +76,6 @@ def load(producer_two, count):
     return logger.info("procuced message")
         
             
-        
-
-
-def populate_stats():
-    """ Periodically update stats """
-    logger.info("Started Periodic Processing")
-
-    time = datetime.datetime.now()
-    
-    current_time = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3] + "Z"
-    session = DB_SESSION()
-    most_recent_statistic = session.query(Stats).order_by(Stats.last_updated.desc()).first()
-    #SOURCE: https://stackoverflow.com/questions/8551952/how-to-get-last-record
-    
-    
-import connexion
-from connexion import NoContent
-from sqlalchemy import and_
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from base import Base
-from stats import Stats
-import datetime
-import requests
-import yaml
-from threading import Lock
-import logging
-import logging.config
-import uuid
-from apscheduler.schedulers.background import BackgroundScheduler
-import json
-from flask_cors import CORS, cross_origin
-from pytz import timezone
-
-
-
-
-with open('app_conf.yml', 'r') as f:
-    app_config = yaml.safe_load(f.read())
-
-with open('log_conf.yml', 'r') as f:
-    log_config = yaml.safe_load(f.read())
-    logging.config.dictConfig(log_config)
-
-
-logger = logging.getLogger('basicLogger')
-
-DB_ENGINE = create_engine("sqlite:///stats.sqlite")
-Base.metadata.bind = DB_ENGINE
-DB_SESSION = sessionmaker(bind=DB_ENGINE)
  
 def populate_stats():
     """ Periodically update stats """
