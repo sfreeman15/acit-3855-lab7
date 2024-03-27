@@ -221,7 +221,7 @@ def populate_stats():
             try:
                 logger.debug(f'Upload trace_id: {upload_item["trace_id"]}')
             except TypeError as e:
-                logger.error(f{upload_item}"Error accessing trace_id in upload_data: {str(e)}")
+                logger.error(f'{upload_item }"Error accessing trace_id in upload_data: {str(e)}')
 
 
             
