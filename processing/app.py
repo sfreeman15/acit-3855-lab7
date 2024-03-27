@@ -141,9 +141,14 @@ def populate_stats():
         msg = { "message_code": "0004", "message": "Received more than 25 messages"}
         msg_str = json.dumps(msg)
         producer2.produce(msg_str.encode('utf-8'))
-
+    if most_recent_statistic.max_tp_readings:
         max_value_p = most_recent_statistic.max_tp_readings
-    max_value_u = most_recent_statistic.max_tu_readings
+    else:
+         max_value_p = 0
+    if most_recent_statistic.max_tu_readings:
+        max_value_u = most_recent_statistic.max_tu_readings
+    else:
+         max_value_u = 0
     
    # # Check if the length of purchase_data exceeds the current maximum TP readings
    #  # and if the number of TP readings didn't increase
