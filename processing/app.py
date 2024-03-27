@@ -135,7 +135,9 @@ def populate_stats():
     purchase_data = purchase_requests.json()
     upload_data = upload_request.json()
 
-    if len(upload_data) + len(purchase_data) > 25:
+    events = len(purchase_data) + len(upload_data)
+
+    if events > 50:
         msg = { "message_code": "0004", "message": "Received more than 25 messages"}
         msg_str = json.dumps(msg)
         producer2.produce(msg_str.encode('utf-8'))
