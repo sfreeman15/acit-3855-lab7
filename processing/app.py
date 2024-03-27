@@ -39,6 +39,8 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 current_retry_count = 0 
 
+sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
+
 def producer2(current_retry_count):
     while current_retry_count < app_config["retries"]['retry_count']:
         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
