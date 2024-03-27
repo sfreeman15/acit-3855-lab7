@@ -196,13 +196,14 @@ def populate_stats():
    #      # Update max_value_u with the new maximum TU readings
    #      max_value_u = len(upload_data)
    #      # Update updated_upload_val with the new maximum TU readings
-
-    for i in purchase_data:
-         if max_value_p < i["price"]:
-              max_value_p = i["price"]
+    logger.info(max_value_p)
     for j in upload_data:
          if max_value_u < j["price"]:
               max_value_u = j["price"]
+    for i in purchase_data:
+         if max_value_p < i["price"]:
+              max_value_p = i["price"]
+
 
 
 
