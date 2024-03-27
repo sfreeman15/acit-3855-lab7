@@ -57,7 +57,7 @@ while current_retry_count < app_config["retries"]['retry_count']:
            
         
 
-def producer2():
+def producer2(current_retry_count):
     while current_retry_count < app_config["retries"]['retry_count']:
         logger.info(f"Connecting to Kafka. Current retry count: {current_retry_count}")
         try:    
@@ -123,7 +123,7 @@ def upload_ticket(body):
     logger.info("Returned event upload response (Id: %s) with status %s",body["trace_id"], 201)
     return NoContent, 201 
 
-producer2()
+producer2(current_retry_count=current_retry_count)
 
 
 app = connexion.FlaskApp(__name__, specification_dir='')
