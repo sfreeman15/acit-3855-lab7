@@ -33,25 +33,18 @@ export default function AppEvents() {
         return (<div>Loading...</div>);
     } else {
         return (
-                <div style="display: flex; justify-content: center;">
-                    <table>
-                        <tbody>
-                            <tr>
-                                <td># Event 0001 Logged: {stats["0001"]}</td>
-                            </tr>
-                            <tr>
-                                <td># Event 0002 Logged: {stats["0002"]}</td>
-                            </tr>
-                            <tr>
-                                <td># Event 0003 Logged: {stats["0003"]}</td>
-                            </tr>
-                            <tr>
-                                <td># Event 0004 Logged: {stats["0004"]}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
+            <div>
+                <table className={"EventTable"}>
+                    <tbody>
+                        <tr>
+                            <tr><td># Event 0001 Logged: {stats["0001"]}</td></tr>
+                            <tr>  <td># Event 0002 Logged: {stats["0002"]}</td></tr>
+                            <tr> <td># Event 0003 Logged: {stats["0003"]}</td></tr>
+                            <tr> <td># Event 0004 Logged: {stats["0004"]}</td></tr>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         );
     }
 }
