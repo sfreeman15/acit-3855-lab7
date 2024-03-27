@@ -53,7 +53,7 @@ services:
       - "8080:8080"
     volumes:
       - /home/azureuser/config/receiver:/config
-      - /home/azureuser/logs:/log
+      - /home/azureuser/logs:/logsg
     depends_on:
     - "kafka"
   storage:
@@ -64,7 +64,7 @@ services:
       - "8090:8090"
     volumes: 
       - /home/azureuser/config/storage:/config  # Make sure the indentation is correct here
-      - /home/azureuser/logs:/log
+      - /home/azureuser/logs:/logs
     depends_on:
       - "kafka"
       - "db"
@@ -76,7 +76,7 @@ services:
       - "8100:8100"
     volumes:
       - /home/azureuser/config/processing:/config
-      - /home/azureuser/logs:/log   
+      - /home/azureuser/logs:/logs
     depends_on:
       - "storage"
     network_mode: "host"
@@ -88,7 +88,7 @@ services:
       - "8110:8110"
     volumes:
       - /home/azureuser/config/audit_log:/config
-      - /home/azureuser/logs:/log 
+      - /home/azureuser/logs:/logs
     depends_on:
       - "kafka"
       - "db"
