@@ -127,7 +127,6 @@ DB_ENGINE = create_engine("sqlite:///stats.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
  
-
 def populate_stats():
     """ Periodically update stats """
     logger.info("Started Periodic Processing")
@@ -197,33 +196,19 @@ def populate_stats():
    #      max_value_u = len(upload_data)
    #      # Update updated_upload_val with the new maximum TU readings
 
-    for upload_item in upload_data:
-        if isinstance(upload_item, dict):
-            logger.info(upload_item)
-            if "price" in upload_item:
-                price = upload_item["price"]
-                logger.info(f'price is: {price}')
-                if max_value_u < price:
-                    max_value_u = price
-            else:
-                logger.warning(f'upload_item does not contain "price" key: {upload_item}')
-        else:
-            logger.warning(f'upload_item is not a dictionary: {upload_item}')
+    for i in purchase_data:
+         if max_value_p < i["price"]:
+              max_value_p = i["price"]
+    for j in upload_data:
+         if max_value_u < j["price"]:
+              max_value_u = j["price"]
 
 
     if most_recent_statistic:
-        for purchase_item in purchase_data:
-            try:
-                logger.debug(f'Purchase trace_id: {purchase_item["trace_id"]}')
-            except TypeError as e:
-                logger.error(f"{purchase_item}Error accessing trace_id in purchase_data: {str(e)}")
-        for upload_item in upload_data:
-            try:
-                logger.debug(f'Upload trace_id: {upload_item["trace_id"]}')
-            except TypeError as e:
-                logger.error(f'{upload_item }"Error accessing trace_id in upload_data: {str(e)}')
-
-
+        for index in range(len(purchase_data)):
+                logger.debug(f'Purchase trace_id: {purchase_data[index]["trace_id"]}')
+        for index in range(len(upload_data)):
+                logger.debug(f'Upload trace_id: {upload_data[index]["trace_id"]}')
             
         # logger.debug(f'Updated Statistics Values - num_tp_readings: {most_recent_statistic.num_tp_readings}, num_tu_readings: {most_recent_statistic.num_tu_readings}, max_tp_readings: {most_recent_statistic.max_tp_readings}, max_tu_readings: {most_recent_statistic.max_tu_readings}, last_updated: {most_recent_statistic.last_updated}')
 
@@ -237,9 +222,23 @@ def populate_stats():
     
     
     
+    logger.info(f'Last Updated: {stats.last_updated}')
+    
 
 
-
+    
+    if stats:
+         session.add(stats)
+    
+    session.commit()
+    session.close()
+    if purchase_data != None:
+        print(f'purchase data: {purchase_data}')
+    else:
+        print("doesn't exist")
+    print(purchase_requests.status_code)
+    print(purchase_data)
+    logger.info("Processing Period has ended.")
     
     if stats:
          session.add(stats)
