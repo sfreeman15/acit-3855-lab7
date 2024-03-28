@@ -51,6 +51,7 @@ logger.info("Log Conf File: %s" % log_conf_file)
 logger.info(f'Connecting to DB.Hostname:"{app_config["datastore"]["filename"]}')
 
 database_path = "/app/event_log.sqlite"  # Update this with the correct path
+DB_ENGINE = create_engine("sqlite:////data/event_log.sqlite")
 
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
