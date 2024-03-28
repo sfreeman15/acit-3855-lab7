@@ -42,7 +42,7 @@ logger = logging.getLogger('basicLogger')
 logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
 
-database_path = "/app/stats.sqlite"  # Update this with the correct path
+database_path = "/app//data/stats.sqlite"  # Update this with the correct path
 def check_file_exists():
     current_time = datetime.datetime.now()
     try:
