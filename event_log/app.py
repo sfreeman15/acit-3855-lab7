@@ -52,6 +52,9 @@ logger.info(f'Connecting to DB.Hostname:"{app_config["datastore"]["filename"]}')
 
 database_path = "/app/event_log.sqlite"  # Update this with the correct path
 
+Base.metadata.bind = DB_ENGINE
+DB_SESSION = sessionmaker(bind=DB_ENGINE)
+
 # Check if the database file exists
 if not os.path.isfile(database_path):
     conn = sqlite3.connect(database_path)
@@ -71,8 +74,7 @@ if not os.path.isfile(database_path):
 
 DB_ENGINE = create_engine("sqlite:///%s" % app_config["datastore"]["filename"])
 
-Base.metadata.bind = DB_ENGINE
-DB_SESSION = sessionmaker(bind=DB_ENGINE)
+
 
 def process_messages():
     logger.info("Request has started")
