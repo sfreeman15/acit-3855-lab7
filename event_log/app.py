@@ -40,11 +40,7 @@ with open('log_conf.yml', 'r') as f:
 logger = logging.getLogger('basicLogger')
 logger.info(f'Connecting to DB.Hostname:"{app_config["datastore"]["filename"]}')
 
-database_path = "/app/data/event_log.sqlite"  # Update this with the correct path
-DB_ENGINE = create_engine("sqlite:////data/%s" % app_config["datastore"]["filename"])
-
-Base.metadata.bind = DB_ENGINE
-DB_SESSION = sessionmaker(bind=DB_ENGINE)
+database_path = "/app/event_log.sqlite"  # Update this with the correct path
 
 # Check if the database file exists
 if not os.path.isfile(database_path):
@@ -63,6 +59,10 @@ if not os.path.isfile(database_path):
     conn.commit()
     conn.close()
 
+DB_ENGINE = create_engine("sqlite:///%s" % app_config["datastore"]["filename"])
+
+Base.metadata.bind = DB_ENGINE
+DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def process_messages():
     logger.info("Request has started")
