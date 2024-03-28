@@ -82,7 +82,6 @@ def check_file_exists():
     except Exception as e:
         logger.error(f"Error creating database file and table structure: {e}")
 
-check_file_exists()
 
 
 
@@ -135,7 +134,7 @@ def load(producer_two, count):
         logger.error(f"Error in load function: {e}")
 
 
-            
+check_file_exists()
  
 def populate_stats():
     """ Periodically update stats """
