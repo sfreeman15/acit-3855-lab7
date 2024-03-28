@@ -59,25 +59,48 @@ DB_ENGINE = create_engine("sqlite:////data/event_log.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
-# Check if the database file exists
-if not os.path.isfile(database_path):
-    logger.info("TABLE DOES NOT EVIST!!!")
-    conn = sqlite3.connect(database_path)
-    c = conn.cursor()
+database_path = "/app/data/event_log.sqlite"  # Update this with the correct path
+def check_file_exists():
+    current_time = datetime.datetime.now()
+    try:
+        # Check if the database file exists
+        if not os.path.isfile(database_path):
+            session = DB_SESSION()
+            # Create the database table if it doesn't exist
+            conn = sqlite3.connect('/data/event_log.sqlite')
+            c = conn.cursor()
 
-    c.execute('''
-        CREATE TABLE event_log (
-            event_id INTEGER PRIMARY KEY ASC,
-            message TEXT NOT NULL,
-            message_code TEXT NOT NULL,
-            date_time VARCHAR(100) NOT NULL
-        )
-    ''')
+            c.execute('''
+                CREATE TABLE stats (
+                    id INTEGER PRIMARY KEY ASC,
+                    num_tp_readings INTEGER NOT NULL,
+                    max_tp_readings REAL,
+                    num_tu_readings INTEGER NOT NULL,
+                    max_tu_readings REAL,
+                    last_updated VARCHAR(100) NOT NULL
+                )
+            ''')
 
-    conn.commit()
-    conn.close()
+            conn.commit()
+            conn.close()
+
+            # Insert default values into the table
+            most_recent_statistic = Stats(
+                num_tp_readings=0,
+                max_tp_readings=0,
+                num_tu_readings=0,
+                max_tu_readings=0,
+                last_updated=current_time
+            ) 
+            session.add(most_recent_statistic)
+            session.commit()
+            session.close()
+            logger.info("No database file found. Created file and added default values.")
+    except Exception as e:
+        logger.error(f"Error creating database file and table structure: {e}")
 
 
+check_file_exists()
 
 def process_messages():
     logger.info("Request has started")
