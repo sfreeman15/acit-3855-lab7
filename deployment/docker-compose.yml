@@ -109,7 +109,6 @@ services:
     volumes:
       - /home/azureuser/config/event_log:/event_log
       - /home/azureuser/logs:/logs
-      - processing-db:/data
     depends_on:
       - "kafka"  
       
