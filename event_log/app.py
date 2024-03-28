@@ -90,6 +90,7 @@ def check_file_exists():
                 message_code = 0,
                 date_time=current_time
             ) 
+            logger.info("adding default values to database!")
             session.add(most_recent_statistic)
             session.commit()
             session.close()

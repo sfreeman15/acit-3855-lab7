@@ -198,7 +198,7 @@ def populate_stats():
 
     if events >= 4:
         logger.info("OVER 3 MESSAGES WOW!!!")
-        msg = { "message_code": "0004", "message": "Received more than 25 messages"}
+        msg = { "message_code": "0004", "message": "Received more than 3 messages"}
         msg_str = json.dumps(msg)
         producer2.produce(msg_str.encode('utf-8'))
     if most_recent_statistic.max_tp_readings:
