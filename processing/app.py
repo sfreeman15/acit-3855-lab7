@@ -42,7 +42,7 @@ logger = logging.getLogger('basicLogger')
 logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
 
-database_path = "/app//data/stats.sqlite"  # Update this with the correct path
+database_path = "/app/data/stats.sqlite"  # Update this with the correct path
 def check_file_exists():
     current_time = datetime.datetime.now()
     try:
@@ -50,7 +50,7 @@ def check_file_exists():
         if not os.path.isfile(database_path):
             session = DB_SESSION()
             # Create the database table if it doesn't exist
-            conn = sqlite3.connect('stats.sqlite')
+            conn = sqlite3.connect('/data/stats.sqlite')
             c = conn.cursor()
 
             c.execute('''
@@ -90,7 +90,7 @@ sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
 
 logger = logging.getLogger('basicLogger')
 
-DB_ENGINE = create_engine("sqlite:///stats.sqlite")
+DB_ENGINE = create_engine("sqlite:////data/stats.sqlite")
 Base.metadata.bind = DB_ENGINE
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
