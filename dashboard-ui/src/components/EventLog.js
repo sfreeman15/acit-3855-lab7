@@ -37,10 +37,10 @@ export default function AppEvents() {
                 <table className={"EventTable"}>
                     <tbody>
                         <tr>
-                            <tr><td># Event 0001 Logged: {stats["0001"]}</td></tr>
-                            <tr><td># Event 0002 Logged: {stats["0002"]}</td></tr>
-                            <tr><td># Event 0003 Logged: {stats["0003"]}</td></tr>
-                            <tr><td># Event 0004 Logged: {stats["0004"]}</td></tr>
+                            <tr><td> Number of <b>Event 0001 </b>Logged: {stats["0001"]}</td></tr>
+                            <tr><td> Number of <b>Event 0002</b> Logged: {stats["0002"]}</td></tr>
+                            <tr><td> Number of <b>Event 0003</b> Logged: {stats["0003"]}</td></tr>
+                            <tr><td> Number of <b>Event 0004</b> Logged: {stats["0004"]}</td></tr>
                         </tr>
                     </tbody>
                 </table>
