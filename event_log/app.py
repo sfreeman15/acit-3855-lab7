@@ -62,22 +62,22 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 database_path = "/app/data/event_log.sqlite"  # Update this with the correct path
 def check_file_exists():
     current_time = datetime.datetime.now()
+    current_time = datetime.datetime.now()
     try:
         # Check if the database file exists
         if not os.path.isfile(database_path):
             session = DB_SESSION()
             # Create the database table if it doesn't exist
             conn = sqlite3.connect('/data/event_log.sqlite')
+
             c = conn.cursor()
 
             c.execute('''
-                CREATE TABLE stats (
-                    id INTEGER PRIMARY KEY ASC,
-                    num_tp_readings INTEGER NOT NULL,
-                    max_tp_readings REAL,
-                    num_tu_readings INTEGER NOT NULL,
-                    max_tu_readings REAL,
-                    last_updated VARCHAR(100) NOT NULL
+                CREATE TABLE event_log (
+                    event_id INTEGER PRIMARY KEY ASC,
+                    message TEXT NOT NULL,
+                    message_code TEXT NOT NULL,
+                    date_time VARCHAR(100) NOT NULL
                 )
             ''')
 
@@ -85,12 +85,10 @@ def check_file_exists():
             conn.close()
 
             # Insert default values into the table
-            most_recent_statistic = Stats(
-                num_tp_readings=0,
-                max_tp_readings=0,
-                num_tu_readings=0,
-                max_tu_readings=0,
-                last_updated=current_time
+            most_recent_statistic = EventLogs(
+                message="",
+                message_code = 0,
+                date_time=current_time
             ) 
             session.add(most_recent_statistic)
             session.commit()
