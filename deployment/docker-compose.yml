@@ -107,7 +107,7 @@ services:
     ports:
       - "8120:8120" 
     volumes:
-      - /home/azureuser/config/event_log:/event_log
+      - /home/azureuser/config/event_log:/config
       - /home/azureuser/logs:/logs
     depends_on:
       - "kafka"  
