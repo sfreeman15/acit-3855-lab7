@@ -84,16 +84,9 @@ def check_file_exists():
             conn.commit()
             conn.close()
 
-            # Insert default values into the table
-            most_recent_statistic = EventLogs(
-                message="",
-                message_code = 0,
-                date_time=current_time
-            ) 
+
             logger.info("adding default values to database!")
-            session.add(most_recent_statistic)
-            session.commit()
-            session.close()
+
             logger.info("No database file found. Created file and added default values.")
     except Exception as e:
         logger.error(f"Error creating database file and table structure: {e}")
