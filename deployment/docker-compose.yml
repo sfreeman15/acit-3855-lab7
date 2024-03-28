@@ -101,9 +101,15 @@ services:
       - "processing"
       - "audit_log"
   event_log:
+    environment:
+      - TARGET_ENV=test
     image: event_log:latest
     ports:
       - "8120:8120" 
+    volumes:
+      - /home/azureuser/config/processing:/event_log
+      - /home/azureuser/logs:/logs
+      - processing-db:/data
     depends_on:
       - "kafka"  
       
