@@ -19,7 +19,7 @@ from pytz import timezone
 from pykafka import KafkaClient
 import time
 import os
-
+import sqlite3
 
 if "TARGET_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
@@ -41,6 +41,50 @@ with open(log_conf_file, 'r') as f:
 logger = logging.getLogger('basicLogger')
 logger.info("App Conf File: %s" % app_conf_file)
 logger.info("Log Conf File: %s" % log_conf_file)
+
+database_path = "/app/stats.sqlite"  # Update this with the correct path
+def check_file_exists():
+    current_time = datetime.datetime.now()
+    try:
+        # Check if the database file exists
+        if not os.path.isfile(database_path):
+            session = DB_SESSION()
+            # Create the database table if it doesn't exist
+            conn = sqlite3.connect('stats.sqlite')
+            c = conn.cursor()
+
+            c.execute('''
+                CREATE TABLE stats (
+                    id INTEGER PRIMARY KEY ASC,
+                    num_tp_readings INTEGER NOT NULL,
+                    max_tp_readings REAL,
+                    num_tu_readings INTEGER NOT NULL,
+                    max_tu_readings REAL,
+                    last_updated VARCHAR(100) NOT NULL
+                )
+            ''')
+
+            conn.commit()
+            conn.close()
+
+            # Insert default values into the table
+            most_recent_statistic = Stats(
+                num_tp_readings=0,
+                max_tp_readings=0,
+                num_tu_readings=0,
+                max_tu_readings=0,
+                last_updated=current_time
+            ) 
+            session.add(most_recent_statistic)
+            session.commit()
+            session.close()
+            logger.info("No database file found. Created file and added default values.")
+    except Exception as e:
+        logger.error(f"Error creating database file and table structure: {e}")
+
+check_file_exists()
+
+
 
 sleepy_time = app_config['sleepy_time']["sleep_in_sec"]
 
